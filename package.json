@@ -15,5 +15,8 @@
 	"workspaces": ["client", "server", "packages/*"],
 	"packageManager": "bun",
 	"author": "Felipe Zapata <felipeazs@gmail.com>",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"@sentry/cli": "^2.43.0"
+	}
 }

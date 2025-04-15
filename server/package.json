@@ -17,7 +17,7 @@
 		"lint:fix": "bun run lint --fix",
 		"typecheck": "tsc --noEmit",
 		"clean": "rm -rf node_modules dist public tsconfig.tsbuildinfo",
-		"sentry:sourcemaps": "sentry-cli sourcemaps inject --org felipeazs --project the-circular-hub ./dist && sentry-cli sourcemaps upload --org felipeazs --project the-circular-hub ./dist",
+		"sentry:sourcemaps": "sentry-cli sourcemaps inject --org felipeazs --project lazocns ./dist && sentry-cli sourcemaps upload --org felipeazs --project lazocns ./dist",
 		"posthog:sourcemaps": "posthog-cli sourcemap inject --directory ./dist && posthog-cli sourcemap upload --directory ./dist",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
