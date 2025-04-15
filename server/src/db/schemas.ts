@@ -1,6 +1,7 @@
 import { createId } from "@paralleldrive/cuid2"
 import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { File } from "node:buffer"
 import { z } from "zod"
 
 export const usuario = pgTable(
