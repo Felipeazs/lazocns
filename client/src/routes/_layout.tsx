@@ -1,102 +1,172 @@
-import { useIsFetching, useIsMutating } from "@tanstack/react-query"
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router"
-import { CircleUserRound, Settings } from "lucide-react"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
+import { Facebook, Github, Instagram, Linkedin, Twitter } from "lucide-react"
 
-import { Logout } from "../components/logout"
-import { ProgressBar } from "../components/progress-bar"
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu"
-import { buttonVariants } from "../lib/utils"
-import { useStore } from "../store"
+import { Button } from "../components/ui/button"
 
 export const Route = createFileRoute("/_layout")({
 	component: RouteComponent,
 })
 
 function RouteComponent() {
-	const { isLoggedIn, usuario: data } = useStore((state) => state)
-	const isFetching = useIsFetching()
-	const isMutating = useIsMutating()
-
 	return (
-		<div className="min-h-screen overflow-y-auto">
-			<div className="flex h-[48px] items-center justify-between gap-4 px-2 py-2 md:px-20">
-				<Link to="/" className="font-bold uppercase" viewTransition>
-					App logo
-				</Link>
-				{!isLoggedIn && (
-					<div className="flex gap-2">
-						<Link to="/login" className={buttonVariants({ variant: "outline" })} viewTransition>
-							ingresar
-						</Link>
-						<Link to="/registro" className={buttonVariants({ variant: "default" })} viewTransition>
-							regístrate
-						</Link>
+		<div className="flex min-h-screen flex-col">
+			<header className="sticky top-0 z-50 w-full border-b bg-white backdrop-blur supports-[backdrop-filter]:bg-white/80">
+				<div className="container flex h-16 items-center justify-between">
+					<div className="flex items-center gap-2">
+						<div className="bg-primary rounded-full p-1.5">
+							<img
+								src="/placeholder.svg?height=24&width=24"
+								alt="StreamLine Logo"
+								width={24}
+								height={24}
+								className="invert"
+							/>
+						</div>
+						<span className="text-secondary text-xl font-bold">StreamLine</span>
 					</div>
-				)}
-				{isLoggedIn && (
-					<Avatar>
-						<DropdownMenu>
-							<DropdownMenuTrigger className="w-full hover:cursor-pointer">
-								<AvatarImage src={data?.image ?? ""} width={32} height={32} alt="profile-image" />
-								<AvatarFallback>
-									{data?.nombre?.substring(0, 1)?.toUpperCase() ?? <CircleUserRound />}
-									{data?.apellido?.substring(0, 1)?.toUpperCase()}
-								</AvatarFallback>
-								<DropdownMenuContent className="font-raleway">
-									<DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									<DropdownMenuItem>
-										<Link to="/ajustes" className="flex w-full items-center gap-2">
-											<Settings />
-											<span>Ajustes</span>
-										</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem>
-										<Logout />
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenuTrigger>
-						</DropdownMenu>
-					</Avatar>
-				)}
-			</div>
-			<div className="h-1">
-				<ProgressBar status={isFetching || isMutating} min={isLoggedIn ? 25 : 0} />
-			</div>
-			<div className="min-h-screen">
-				<hr />
-				<Outlet />
-			</div>
-			{/* Footer */}
-			<footer className="absolute z-10 my-6 w-full border-t bg-white py-6 md:py-0">
-				<div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-					<p className="text-muted-foreground text-center text-sm leading-loose md:text-left">
-						© 2025 Mainstack
-					</p>
-					<div className="flex gap-4">
-						<Link
-							to="/"
-							className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
-							Términos y condiciones
-						</Link>
-						<Link
-							to="/"
-							className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
-							Privacidad
-						</Link>
-						<Link
-							to="/"
-							className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
-							Contacto
-						</Link>
+					<nav className="hidden gap-6 md:flex">
+						<a
+							href="#features"
+							className="text-secondary hover:text-primary text-sm font-medium transition-colors">
+							Features
+						</a>
+						<a
+							href="#testimonials"
+							className="text-secondary hover:text-primary text-sm font-medium transition-colors">
+							Testimonials
+						</a>
+						<a
+							href="#pricing"
+							className="text-secondary hover:text-primary text-sm font-medium transition-colors">
+							Pricing
+						</a>
+						<a
+							href="#contact"
+							className="text-secondary hover:text-primary text-sm font-medium transition-colors">
+							Contact
+						</a>
+					</nav>
+					<div className="flex items-center gap-4">
+						<a
+							href="/login"
+							className="text-secondary hover:text-primary hidden text-sm font-medium transition-colors sm:block">
+							Log in
+						</a>
+						<Button className="bg-primary text-secondary hover:bg-primary/90">Get Started</Button>
+					</div>
+				</div>
+			</header>
+			<Outlet />
+			<footer className="bg-secondary w-full border-t text-white">
+				<div className="container flex flex-col gap-8 px-4 py-12 md:px-6">
+					<div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+						<div className="flex flex-col gap-2">
+							<h3 className="text-lg font-medium text-white">Product</h3>
+							<nav className="flex flex-col gap-2">
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Features
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Pricing
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Integrations
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Changelog
+								</a>
+							</nav>
+						</div>
+						<div className="flex flex-col gap-2">
+							<h3 className="text-lg font-medium text-white">Company</h3>
+							<nav className="flex flex-col gap-2">
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									About
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Blog
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Careers
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Contact
+								</a>
+							</nav>
+						</div>
+						<div className="flex flex-col gap-2">
+							<h3 className="text-lg font-medium text-white">Resources</h3>
+							<nav className="flex flex-col gap-2">
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Documentation
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Help Center
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Community
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Webinars
+								</a>
+							</nav>
+						</div>
+						<div className="flex flex-col gap-2">
+							<h3 className="text-lg font-medium text-white">Legal</h3>
+							<nav className="flex flex-col gap-2">
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Privacy Policy
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Terms of Service
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									Cookie Policy
+								</a>
+								<a href="#" className="hover:text-primary text-sm text-white/70 transition-colors">
+									GDPR
+								</a>
+							</nav>
+						</div>
+					</div>
+					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+						<div className="flex items-center gap-2">
+							<div className="bg-primary rounded-full p-1.5">
+								<img
+									src="/placeholder.svg?height=24&width=24"
+									alt="StreamLine Logo"
+									width={24}
+									height={24}
+									className="invert"
+								/>
+							</div>
+							<span className="text-xl font-bold text-white">StreamLine</span>
+						</div>
+						<div className="flex gap-4">
+							<a href="#" className="hover:text-primary text-white/70 transition-colors">
+								<Twitter className="h-5 w-5" />
+								<span className="sr-only">Twitter</span>
+							</a>
+							<a href="#" className="hover:text-primary text-white/70 transition-colors">
+								<Facebook className="h-5 w-5" />
+								<span className="sr-only">Facebook</span>
+							</a>
+							<a href="#" className="hover:text-primary text-white/70 transition-colors">
+								<Instagram className="h-5 w-5" />
+								<span className="sr-only">Instagram</span>
+							</a>
+							<a href="#" className="hover:text-primary text-white/70 transition-colors">
+								<Linkedin className="h-5 w-5" />
+								<span className="sr-only">aedIn</span>
+							</a>
+							<a href="#" className="hover:text-primary text-white/70 transition-colors">
+								<Github className="h-5 w-5" />
+								<span className="sr-only">GitHub</span>
+							</a>
+						</div>
+					</div>
+					<div className="text-sm text-white/70">
+						© {new Date().getFullYear()} StreamLine, Inc. All rights reserved.
 					</div>
 				</div>
 			</footer>
