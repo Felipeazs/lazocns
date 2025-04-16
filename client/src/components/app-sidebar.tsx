@@ -1,14 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router"
-import { Home } from "lucide-react"
+import { Home, Settings } from "lucide-react"
 
 import { cn } from "../lib/utils"
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
-	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
@@ -20,39 +18,52 @@ const items = [
 		url: "/panel",
 		icon: Home,
 	},
+	{
+		title: "Ajustes",
+		url: "/ajustes",
+		icon: Settings,
+	},
 ]
 
 export function AppSidebar() {
 	const { pathname } = useLocation()
 	return (
-		<Sidebar className="bg-slate-50 p-4">
-			<SidebarContent>
+		<Sidebar className="bg-secondary h-full p-4">
+			<SidebarContent className="">
 				<SidebarGroup />
-				<SidebarGroupLabel>The Circular Hub</SidebarGroupLabel>
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem className="grid w-full gap-2">
-							{items.map((item) => (
-								<SidebarMenuButton
-									key={item.title}
-									className={cn(
-										"w-full justify-start",
-										pathname === item.url && "bg-muted font-medium",
-									)}
-									variant={pathname === item.url ? "outline" : "default"}
-									asChild>
-									<Link to={item.url}>
-										<item.icon />
-										<span>{item.title}</span>
-									</Link>
-								</SidebarMenuButton>
-							))}
+							{items.map((item) => {
+								const isActive = pathname === item.url
+								return (
+									<SidebarMenuButton
+										key={item.title}
+										className={cn(
+											"w-full justify-start",
+											pathname === item.url && "bg-muted font-medium",
+										)}
+										variant={pathname === item.url ? "outline" : "default"}
+										asChild>
+										<Link
+											to={item.url}
+											className={cn(
+												"flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+												isActive
+													? "bg-primary text-secondary"
+													: "text-white/70 hover:bg-white/10 hover:text-white",
+											)}>
+											<item.icon />
+											<span>{item.title}</span>
+										</Link>
+									</SidebarMenuButton>
+								)
+							})}
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarGroupContent>
 				<SidebarGroup />
 			</SidebarContent>
-			<SidebarFooter />
 		</Sidebar>
 	)
 }
