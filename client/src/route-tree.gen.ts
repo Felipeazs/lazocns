@@ -20,6 +20,7 @@ import { Route as LayoutPasswordResetImport } from './routes/_layout/password/re
 import { Route as LayoutPasswordForgotImport } from './routes/_layout/password/forgot'
 import { Route as LayoutAuthUsuarioImport } from './routes/_layout/_auth/_usuario'
 import { Route as LayoutAuthUsuarioPanelImport } from './routes/_layout/_auth/_usuario/panel'
+import { Route as LayoutAuthUsuarioFodaImport } from './routes/_layout/_auth/_usuario/foda'
 import { Route as LayoutAuthUsuarioAjustesImport } from './routes/_layout/_auth/_usuario/ajustes'
 
 // Create/Update Routes
@@ -72,6 +73,12 @@ const LayoutAuthUsuarioRoute = LayoutAuthUsuarioImport.update({
 const LayoutAuthUsuarioPanelRoute = LayoutAuthUsuarioPanelImport.update({
   id: '/panel',
   path: '/panel',
+  getParentRoute: () => LayoutAuthUsuarioRoute,
+} as any)
+
+const LayoutAuthUsuarioFodaRoute = LayoutAuthUsuarioFodaImport.update({
+  id: '/foda',
+  path: '/foda',
   getParentRoute: () => LayoutAuthUsuarioRoute,
 } as any)
 
@@ -148,6 +155,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAuthUsuarioAjustesImport
       parentRoute: typeof LayoutAuthUsuarioImport
     }
+    '/_layout/_auth/_usuario/foda': {
+      id: '/_layout/_auth/_usuario/foda'
+      path: '/foda'
+      fullPath: '/foda'
+      preLoaderRoute: typeof LayoutAuthUsuarioFodaImport
+      parentRoute: typeof LayoutAuthUsuarioImport
+    }
     '/_layout/_auth/_usuario/panel': {
       id: '/_layout/_auth/_usuario/panel'
       path: '/panel'
@@ -162,11 +176,13 @@ declare module '@tanstack/react-router' {
 
 interface LayoutAuthUsuarioRouteChildren {
   LayoutAuthUsuarioAjustesRoute: typeof LayoutAuthUsuarioAjustesRoute
+  LayoutAuthUsuarioFodaRoute: typeof LayoutAuthUsuarioFodaRoute
   LayoutAuthUsuarioPanelRoute: typeof LayoutAuthUsuarioPanelRoute
 }
 
 const LayoutAuthUsuarioRouteChildren: LayoutAuthUsuarioRouteChildren = {
   LayoutAuthUsuarioAjustesRoute: LayoutAuthUsuarioAjustesRoute,
+  LayoutAuthUsuarioFodaRoute: LayoutAuthUsuarioFodaRoute,
   LayoutAuthUsuarioPanelRoute: LayoutAuthUsuarioPanelRoute,
 }
 
@@ -214,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/password/forgot': typeof LayoutPasswordForgotRoute
   '/password/reset': typeof LayoutPasswordResetRoute
   '/ajustes': typeof LayoutAuthUsuarioAjustesRoute
+  '/foda': typeof LayoutAuthUsuarioFodaRoute
   '/panel': typeof LayoutAuthUsuarioPanelRoute
 }
 
@@ -225,6 +242,7 @@ export interface FileRoutesByTo {
   '/password/forgot': typeof LayoutPasswordForgotRoute
   '/password/reset': typeof LayoutPasswordResetRoute
   '/ajustes': typeof LayoutAuthUsuarioAjustesRoute
+  '/foda': typeof LayoutAuthUsuarioFodaRoute
   '/panel': typeof LayoutAuthUsuarioPanelRoute
 }
 
@@ -239,6 +257,7 @@ export interface FileRoutesById {
   '/_layout/password/forgot': typeof LayoutPasswordForgotRoute
   '/_layout/password/reset': typeof LayoutPasswordResetRoute
   '/_layout/_auth/_usuario/ajustes': typeof LayoutAuthUsuarioAjustesRoute
+  '/_layout/_auth/_usuario/foda': typeof LayoutAuthUsuarioFodaRoute
   '/_layout/_auth/_usuario/panel': typeof LayoutAuthUsuarioPanelRoute
 }
 
@@ -252,6 +271,7 @@ export interface FileRouteTypes {
     | '/password/forgot'
     | '/password/reset'
     | '/ajustes'
+    | '/foda'
     | '/panel'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -262,6 +282,7 @@ export interface FileRouteTypes {
     | '/password/forgot'
     | '/password/reset'
     | '/ajustes'
+    | '/foda'
     | '/panel'
   id:
     | '__root__'
@@ -274,6 +295,7 @@ export interface FileRouteTypes {
     | '/_layout/password/forgot'
     | '/_layout/password/reset'
     | '/_layout/_auth/_usuario/ajustes'
+    | '/_layout/_auth/_usuario/foda'
     | '/_layout/_auth/_usuario/panel'
   fileRoutesById: FileRoutesById
 }
@@ -334,6 +356,7 @@ export const routeTree = rootRoute
       "parent": "/_layout/_auth",
       "children": [
         "/_layout/_auth/_usuario/ajustes",
+        "/_layout/_auth/_usuario/foda",
         "/_layout/_auth/_usuario/panel"
       ]
     },
@@ -347,6 +370,10 @@ export const routeTree = rootRoute
     },
     "/_layout/_auth/_usuario/ajustes": {
       "filePath": "_layout/_auth/_usuario/ajustes.tsx",
+      "parent": "/_layout/_auth/_usuario"
+    },
+    "/_layout/_auth/_usuario/foda": {
+      "filePath": "_layout/_auth/_usuario/foda.tsx",
       "parent": "/_layout/_auth/_usuario"
     },
     "/_layout/_auth/_usuario/panel": {

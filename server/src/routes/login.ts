@@ -13,7 +13,7 @@ import { zValidator } from "../lib/validator-wrapper"
 import rateLimit from "../middlewares/rate-limit"
 import { tryCatch } from "../utils/try-catch"
 
-export default new Hono().post("/", zValidator("json", loginSchema), rateLimit, async (c) => {
+export default new Hono().post("/", rateLimit, zValidator("json", loginSchema), async (c) => {
 	const { email, password } = c.req.valid("json")
 
 	const { data: usuarioEncontrado, error: dbError } = await tryCatch(

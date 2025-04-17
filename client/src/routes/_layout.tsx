@@ -30,46 +30,47 @@ function RouteComponent() {
 					isLoggedIn ? "inline" : "sticky top-0 z-50",
 				)}>
 				<div className="container flex h-16 items-center justify-between">
-					<Link
-						to="/"
-						className="flex items-center gap-2"
-						activeProps={{ className: "text-black" }}>
-						<div className="bg-primary rounded-full p-1.5">
-							<img
-								src="/placeholder.svg?height=24&width=24"
-								alt="logo"
-								width={24}
-								height={24}
-								className="invert"
-							/>
-						</div>
-						<span className="text-secondary text-xl font-bold">LazoCNS</span>
-					</Link>
+					{!isLoggedIn && (
+						<Link
+							to="/"
+							className="flex items-center gap-2"
+							activeProps={{ className: "text-black" }}>
+							<div className="bg-primary rounded-full p-1.5">
+								<img
+									src="/placeholder.svg?height=24&width=24"
+									alt="logo"
+									width={24}
+									height={24}
+									className="invert"
+								/>
+							</div>
+							<span className="text-secondary text-xl font-bold">LazoCNS</span>
+						</Link>
+					)}
 					{!isLoggedIn && (
 						<nav className="hidden gap-6 md:flex">
-							<Link
-								to="/"
-								activeProps={{ className: "font-bold" }}
+							<a
+								href="#hero"
 								className="text-secondary hover:text-primary text-sm font-medium transition-colors">
 								Inicio
-							</Link>
+							</a>
 							<a
-								href="/#about"
+								href="#about"
 								className="text-secondary hover:text-primary text-sm font-medium transition-colors">
 								Quiénes Somos
 							</a>
 							<a
-								href="/#servicios"
+								href="#servicios"
 								className="text-secondary hover:text-primary text-sm font-medium transition-colors">
 								Servicios
 							</a>
 							<a
-								href="/#precios"
+								href="#precios"
 								className="text-secondary hover:text-primary text-sm font-medium transition-colors">
 								Precios
 							</a>
 							<a
-								href="/#contact"
+								href="#contact"
 								className="text-secondary hover:text-primary text-sm font-medium transition-colors">
 								Contacto
 							</a>
@@ -97,7 +98,7 @@ function RouteComponent() {
 							</Link>
 						</div>
 					) : (
-						<div className="flex items-center gap-2">
+						<div className="ml-auto flex items-center gap-2">
 							<div className="flex flex-col items-end">
 								<span className="text-sm font-medium">
 									{data?.nombre} {data?.apellido}

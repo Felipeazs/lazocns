@@ -26,7 +26,7 @@ function Index() {
 	return (
 		<main className="min-h-screen flex-1">
 			{/* Hero Section */}
-			<section className="bg-accent w-full py-12 md:py-24 lg:py-32 xl:py-48">
+			<section id="hero" className="bg-accent w-full py-12 md:py-24 lg:py-32 xl:py-48">
 				<div className="container px-4 md:px-6">
 					<div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
 						<div className="flex flex-col justify-center space-y-4">
@@ -450,14 +450,12 @@ function Index() {
 								<ul className="grid gap-2">
 									<li className="grid grid-cols-8 items-center gap-1">
 										<Check className="text-primary col-span-1 h-4 w-4" />
-										<span className="text-secondary col-span-7">
-											Sesión de diagnóstico para encontrar.
-										</span>
+										<span className="text-secondary col-span-7">Sesión de diagnóstico.</span>
 									</li>
 									<li className="grid grid-cols-8 items-center gap-1">
 										<Check className="text-primary col-span-1 h-4 w-4" />
 										<span className="text-secondary col-span-7">
-											Diagnóstico, recomendaciones y plan de trabajo ajustado.
+											Recomendaciones y plan de trabajo ajustado.
 										</span>
 									</li>
 									<li className="grid grid-cols-8 items-center gap-1">
