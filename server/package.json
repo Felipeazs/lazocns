@@ -29,6 +29,7 @@
 		"@hono/node-server": "^1.14.0",
 		"@hono/sentry": "^1.2.0",
 		"@hono/zod-validator": "^0.4.3",
+		"@knocklabs/node": "^0.6.19",
 		"@monorepo/eslint-config": "workspace:*",
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@react-email/components": "0.0.36",

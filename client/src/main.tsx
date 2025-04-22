@@ -9,6 +9,7 @@ import { createRoot } from "react-dom/client"
 import { ErrorComponent } from "./components/error-component"
 import { NotFoundComponent } from "./components/notfound-component"
 import { TIMER } from "./lib/api-utils"
+import { KnockClientProvider } from "./providers/knock"
 import { routeTree } from "./route-tree.gen"
 import { useStore } from "./store"
 
@@ -43,7 +44,9 @@ export function InnerApp() {
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<InnerApp />
+			<KnockClientProvider>
+				<InnerApp />
+			</KnockClientProvider>
 		</QueryClientProvider>
 	</StrictMode>,
 )

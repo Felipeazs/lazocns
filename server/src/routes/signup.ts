@@ -5,6 +5,7 @@ import { HTTPException } from "hono/http-exception"
 import db from "../db"
 import { signupSchema, usuario } from "../db/schemas"
 import { ERROR_CODE } from "../lib/constants"
+import { knock } from "../lib/knock"
 import { captureEvent } from "../lib/posthog"
 import { zValidator } from "../lib/validator-wrapper"
 import rateLimit from "../middlewares/rate-limit"
@@ -53,6 +54,20 @@ export default new Hono().post("/", zValidator("json", signupSchema), rateLimit,
 	if (dbError) {
 		throw new HTTPException(ERROR_CODE.INTERNAL_SERVER_ERROR, { message: dbError.message })
 	}
+
+	await tryCatch(
+		knock.workflows.trigger("bienvenido", {
+			actor: {
+				id: nuevo_usuario[0].id,
+				name: "",
+				email,
+			},
+			recipients: [nuevo_usuario[0].id],
+			data: {
+				email,
+			},
+		}),
+	)
 
 	captureEvent({ distinct_id: email, event: "signup" })
 

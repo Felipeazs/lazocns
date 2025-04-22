@@ -7,6 +7,8 @@ export const env = createEnv({
 		VITE_API_URL: z.string(),
 		VITE_PUBLIC_POSTHOG_KEY: z.string(),
 		VITE_PUBLIC_POSTHOG_HOST: z.string(),
+		VITE_KNOCK_PUBLIC_API_KEY: z.string(),
+		VITE_KNOCK_FEED_CHANNEL_ID: z.string(),
 	},
 	runtimeEnv: import.meta.env,
 

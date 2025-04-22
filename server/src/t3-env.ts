@@ -18,6 +18,7 @@ export const env = createEnv({
 		CLOUDINARY_NAME: z.string(),
 		CLOUDINARY_FOLDER: z.string(),
 		RESEND_API_KEY: z.string(),
+		KNOCK_API_KEY: z.string().optional(),
 	},
 	runtimeEnv: process.env,
 	skipValidation: false,

@@ -9,6 +9,7 @@ import type { AppEnv } from "../lib/types"
 import db from "../db"
 import { editUsuarioSchema, usuario as usuarioTable } from "../db/schemas"
 import { ERROR_CODE } from "../lib/constants"
+import { knock } from "../lib/knock"
 import { deleteImage, uploadImage } from "../lib/providers/cloudinary"
 import { deleteRedisItem, getRedisItem, setRedisItem } from "../lib/redis"
 import { zValidator } from "../lib/validator-wrapper"
@@ -129,6 +130,8 @@ const app = new Hono<AppEnv>()
 		if (cloudError) {
 			throw new HTTPException(ERROR_CODE.INTERNAL_SERVER_ERROR, { message: cloudError.message })
 		}
+
+		await tryCatch(knock.users.delete(usuario!.id))
 
 		return c.json({ status: "ok" }, 200)
 	})

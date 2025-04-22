@@ -9,13 +9,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/client/components/ui/card"
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
-} from "@/client/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem } from "@/client/components/ui/carousel"
 import { buttonVariants } from "@/client/lib/utils"
 
 export const Route = createFileRoute("/_layout/")({
@@ -49,15 +43,6 @@ function Index() {
 									})}>
 									Comienza tu evaluación aquí! <ChevronRight className="ml-2 h-4 w-4" />
 								</Link>
-								<Link
-									to="/panel"
-									className={buttonVariants({
-										className: "border-secondary text-secondary hover:bg-secondary/10",
-										size: "lg",
-										variant: "outline",
-									})}>
-									Entrar
-								</Link>
 							</div>
 						</div>
 						<div className="relative">
@@ -79,6 +64,13 @@ function Index() {
 				<div className="container px-4 md:px-6">
 					<div className="grid items-center gap-10 lg:grid-cols-2">
 						<div className="relative">
+							<div className="bg-primary text-secondary inline-block self-start rounded-lg px-3 py-1 text-sm font-medium">
+								Quiénes somos
+							</div>
+							<h2 className="text-secondary text-3xl font-bold tracking-tighter md:text-4xl/tight">
+								Lazo Consultora de Negocios Sustentables es la consultora líder en economía
+								circular.
+							</h2>
 							<div className="bg-secondary/10 absolute inset-0 rotate-3 transform rounded-xl"></div>
 							<div className="bg-primary/20 absolute inset-0 -rotate-3 transform rounded-xl"></div>
 							<img
@@ -90,13 +82,6 @@ function Index() {
 							/>
 						</div>
 						<div className="flex flex-col space-y-4">
-							<div className="bg-primary text-secondary inline-block self-start rounded-lg px-3 py-1 text-sm font-medium">
-								Quiénes somos
-							</div>
-							<h2 className="text-secondary text-3xl font-bold tracking-tighter md:text-4xl/tight">
-								Lazo Consultora de Negocios Sustentables es la consultora líder en economía
-								circular.
-							</h2>
 							<p className="text-muted-foreground md:text-lg">
 								Dedicada a transformar la forma en que las empresas operan en el triple de impacto.
 								Fundada en 2020, nuestra misión es facilitar la transición de las empresas hacia
@@ -184,8 +169,8 @@ function Index() {
 					<Carousel>
 						<CarouselContent>
 							<CarouselItem className="bg-accent border-accent/50 grid items-baseline gap-10 border px-8 py-3 lg:grid-cols-2">
-								<div>
-									<h3 className="text-secondary pb-5 text-xl font-bold">
+								<div className="flex flex-col items-center justify-center gap-5">
+									<h3 className="text-secondary text-xl font-bold">
 										Servicio de Prototipado Web para Startups
 									</h3>
 									<p className="text-muted-foreground">
@@ -200,8 +185,15 @@ function Index() {
 										finales estén alineados con las expectativas del mercado y las necesidades del
 										usuario.
 									</p>
+									<img
+										width={500}
+										height={500}
+										alt="prototipado web"
+										className="rounded-xl shadow-lg"
+										src="web.svg"
+									/>
 								</div>
-								<div>
+								<div className="flex flex-col items-center justify-center gap-5">
 									<h3 className="text-secondary pb-5 text-xl font-bold">
 										Asesoría en proyectos I+D+i
 									</h3>
@@ -214,56 +206,16 @@ function Index() {
 										potencial, y comunicación sostenible que resalta el valor de las innovaciones
 										emergentes
 									</p>
-								</div>
-							</CarouselItem>
-							<CarouselItem className="bg-accent border-accent/50 grid items-baseline gap-10 border px-8 py-3 lg:grid-cols-2">
-								<div>
-									<h3 className="text-secondary pb-5 text-xl font-bold">
-										Prototipado y desarrollo de hojas de ruta
-									</h3>
-									<p className="text-muted-foreground">
-										Facilitamos el desarrollo de hojas de ruta y prototipos iniciales, utilizando
-										herramientas de análisis de ciclo de vida y simulaciones de procesos. Este
-										servicio es esencial para startups que necesitan experimentar y probar sus ideas
-										rápidamente en entornos controlados antes de lanzarlas al mercado. Ayudamos a
-										definir pasos claros y estrategias para escalar sus proyectos desde conceptos
-										hasta productos listos para el mercado, utilizando metodologías ágiles y
-										eficientes.
-									</p>
-								</div>
-								<div>
-									<h3 className="text-secondary pb-5 text-xl font-bold">
-										Gestión de proyectos para emprendimientos innovadores
-									</h3>
-									<p className="text-muted-foreground">
-										Nuestra gestión de proyectos está diseñada para apoyar a las startups en la
-										coordinación y ejecución de sus planes de innovación. Con especial énfasis en
-										bioprocesos y biotecnología, ofrecemos diagnósticos de madurez y asistencia en
-										la formación de alianzas estratégicas. Este servicio ayuda a los emprendedores a
-										mantener sus proyectos en curso, optimizados y alineados con objetivos
-										comerciales y sostenibles claros.
-									</p>
-								</div>
-							</CarouselItem>
-							<CarouselItem className="bg-accent border-accent/50 grid items-baseline gap-10 border px-8 py-3">
-								<div className="bg-accent border-accent/50 grid gap-1 border p-6">
-									<h3 className="text-secondary pb-5 text-xl font-bold">
-										Capacitación y talleres de innovación y sostenibilidad{" "}
-									</h3>
-									<p className="text-muted-foreground">
-										Brindamos talleres y capacitaciones que enseñan cómo integrar la sostenibilidad
-										en el modelo de negocio desde el inicio. Utilizando herramientas como el Canvas
-										B y Canvas circular, instruimos a las startups en el diseño de negocios que no
-										sólo son económicamente viables, sino también responsables con el medio ambiente
-										y la sociedad. Estos talleres son ideales para emprendedores que buscan
-										incorporar principios de economía circular y sostenibilidad desde el principio
-										de sus proyectos.
-									</p>
+									<img
+										width={500}
+										height={500}
+										alt="work"
+										className="rounded-xl shadow-lg"
+										src="work.svg"
+									/>
 								</div>
 							</CarouselItem>
 						</CarouselContent>
-						<CarouselPrevious />
-						<CarouselNext />
 					</Carousel>
 				</div>
 			</section>
@@ -542,7 +494,7 @@ function Index() {
 								¡Comienza tu viaje hacia la innovación sostenible hoy mismo!
 							</p>
 						</div>
-						<div className="flex flex-col items-center gap-2 min-[400px]:flex-row">
+						<div className="flex flex-col items-center gap-2 min-[490px]:flex-row">
 							<a
 								href="mailto:contacto@lazocns.cl"
 								target="_blank"

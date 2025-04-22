@@ -3,6 +3,7 @@
 import { Download, RefreshCw, Save, Share2 } from "lucide-react"
 import { useState } from "react"
 
+import { Badge } from "@/client/components/ui/badge"
 import { Button } from "@/client/components/ui/button"
 import {
 	Card,
@@ -15,8 +16,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/client/components/ui/tabs"
 
 interface FODAAnswer {
-	importance: number // 0 to 1
-	qualification: number // 1 to 4
+	factor: string
+	importancia: number // 0 to 1
+	calificacion: number // 1 to 4
 }
 
 interface FODAResultsProps {
@@ -34,7 +36,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 
 	const handleSave = () => {
 		// In a real app, this would save to a database
-		setSavedStatus("Analysis saved successfully!")
+		setSavedStatus("Análisis guardado existosamente!")
 		setTimeout(() => setSavedStatus(null), 3000)
 	}
 
@@ -103,33 +105,33 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 		fodaText += "FORTALEZAS:\n"
 		answers.fortalezas.forEach((answer, index) => {
 			fodaText += `${index + 1}. ${getCategoryQuestion("fortalezas", index)}\n`
-			fodaText += `   Importancia: ${answer.importance.toFixed(2)} (${getImportanceLabel(answer.importance)})\n`
-			fodaText += `   Calificación: ${answer.qualification} (${getQualificationLabel(answer.qualification)})\n`
-			fodaText += `   Puntaje Ponderado: ${(answer.importance * answer.qualification).toFixed(2)}\n\n`
+			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
+			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
+			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
 		})
 
 		fodaText += "\nDEBILIDADES:\n"
 		answers.debilidades.forEach((answer, index) => {
 			fodaText += `${index + 1}. ${getCategoryQuestion("debilidades", index)}\n`
-			fodaText += `   Importancia: ${answer.importance.toFixed(2)} (${getImportanceLabel(answer.importance)})\n`
-			fodaText += `   Calificación: ${answer.qualification} (${getQualificationLabel(answer.qualification)})\n`
-			fodaText += `   Puntaje Ponderado: ${(answer.importance * answer.qualification).toFixed(2)}\n\n`
+			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
+			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
+			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
 		})
 
 		fodaText += "\nOPORTUNIDADES:\n"
 		answers.oportunidades.forEach((answer, index) => {
 			fodaText += `${index + 1}. ${getCategoryQuestion("oportunidades", index)}\n`
-			fodaText += `   Importancia: ${answer.importance.toFixed(2)} (${getImportanceLabel(answer.importance)})\n`
-			fodaText += `   Calificación: ${answer.qualification} (${getQualificationLabel(answer.qualification)})\n`
-			fodaText += `   Puntaje Ponderado: ${(answer.importance * answer.qualification).toFixed(2)}\n\n`
+			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
+			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
+			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
 		})
 
 		fodaText += "\nAMENAZAS:\n"
 		answers.amenazas.forEach((answer, index) => {
 			fodaText += `${index + 1}. ${getCategoryQuestion("amenazas", index)}\n`
-			fodaText += `   Importancia: ${answer.importance.toFixed(2)} (${getImportanceLabel(answer.importance)})\n`
-			fodaText += `   Calificación: ${answer.qualification} (${getQualificationLabel(answer.qualification)})\n`
-			fodaText += `   Puntaje Ponderado: ${(answer.importance * answer.qualification).toFixed(2)}\n\n`
+			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
+			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
+			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
 		})
 
 		// Create a blob and download it
@@ -146,7 +148,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 
 	const renderAnswers = (category: keyof typeof answers) => {
 		return answers[category].map((answer, index) => {
-			const weightedScore = answer.importance * answer.qualification
+			const weightedScore = answer.importancia * answer.calificacion
 
 			return (
 				<div key={`${category}-${index}`} className="mb-6 rounded-md border p-4">
@@ -159,9 +161,9 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 						<div className="bg-accent/50 rounded-md p-3">
 							<div className="text-muted-foreground mb-1 text-xs">Importancia</div>
 							<div className="flex items-center justify-between">
-								<span className="font-medium">{getImportanceLabel(answer.importance)}</span>
+								<span className="font-medium">{getImportanceLabel(answer.importancia)}</span>
 								<span className="bg-secondary rounded-md px-2 py-0.5 text-sm text-white">
-									{answer.importance.toFixed(2)}
+									{answer.importancia.toFixed(2)}
 								</span>
 							</div>
 						</div>
@@ -169,9 +171,9 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 						<div className="bg-accent/50 rounded-md p-3">
 							<div className="text-muted-foreground mb-1 text-xs">Calificación</div>
 							<div className="flex items-center justify-between">
-								<span className="font-medium">{getQualificationLabel(answer.qualification)}</span>
+								<span className="font-medium">{getQualificationLabel(answer.calificacion)}</span>
 								<span className="bg-secondary rounded-md px-2 py-0.5 text-sm text-white">
-									{answer.qualification}
+									{answer.calificacion}
 								</span>
 							</div>
 						</div>
@@ -201,7 +203,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 
 	const calculateCategoryScore = (category: keyof typeof answers) => {
 		const totalWeightedScore = answers[category].reduce(
-			(acc, answer) => acc + answer.importance * answer.qualification,
+			(acc, answer) => acc + answer.importancia * answer.calificacion,
 			0,
 		)
 		return totalWeightedScore / answers[category].length
@@ -250,7 +252,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 				</Button>
 			</div>
 
-			<Card>
+			<Card className="max-w-[800px] lg:w-[800px]">
 				<CardHeader>
 					<CardTitle>Resumen Puntaje FODA</CardTitle>
 					<CardDescription>Análisis general de tus factores FODA</CardDescription>
@@ -326,6 +328,119 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 							</div>
 						</div>
 					</div>
+					<div className="bg-accent/50 my-2 space-y-4 rounded-md p-4">
+						<h3 className="mb-2 font-semibold">Interpretación Estratégica y recomendaciones</h3>
+						<Card>
+							<CardHeader className="flex w-full flex-row justify-between text-green-600">
+								<CardTitle>fortalezas</CardTitle>
+								<CardDescription>
+									<Badge className="bg-green-100">{strengthsScore}</Badge>
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<div className="flex flex-col gap-2">
+									<div className="space-y-2">
+										<p className="font-bold">Interpretación estratégica</p>
+										<p>
+											{Number(strengthsScore) > 3
+												? "El proyecto cuenta con fortalezas robustas que le permiten destacarse o liderar en su área."
+												: Number(strengthsScore) > 2
+													? "Existen fortalezas claras que pueden ser aprovechadas si se alinean con oportunidades."
+													: Number(strengthsScore) > 1
+														? "Hay algunas capacidades internas, pero no suficientes para competir con éxito."
+														: "No se identifican capacidades internas significativas. El proyecto necesita construir coompetencias clave."}
+										</p>
+									</div>
+									<div className="w space-y-2">
+										<p className="font-bold">Estrategia CAME sugerida</p>
+										<p>
+											{Number(strengthsScore) > 3
+												? "El proyecto cuenta con fortalezas robustas que le permiten destacarse o liderar en su área."
+												: Number(strengthsScore) > 2
+													? "Existen fortalezas claras que pueden ser aprovechadas si se alinean con oportunidades."
+													: Number(strengthsScore) > 1
+														? "Hay algunas capacidades internas, pero no suficientes para competir con éxito."
+														: "No se identifican capacidades internas significativas. El proyecto necesita construir coompetencias clave."}
+										</p>
+									</div>
+								</div>
+							</CardContent>
+						</Card>
+						<Card>
+							<CardHeader className="flex w-full flex-row justify-between text-amber-600">
+								<CardTitle>debilidades</CardTitle>
+								<CardDescription>
+									<Badge className="bg-amber-100">{weaknessesScore}</Badge>
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<div className="flex flex-col gap-2">
+									<div className="space-y-2">
+										<p className="font-bold">Interpretación estratégica</p>
+										<p>
+											{Number(weaknessesScore) > 3
+												? "Las debilidades comprometen seriamente la viabilidad del proyecto si no se resuelven."
+												: Number(weaknessesScore) > 2
+													? "Varias debilidades afectan la capacidad operativa o estratégica del proyecto."
+													: Number(weaknessesScore) > 1
+														? "Hay elementos internos que deben corregirse, pero no impiden avanzar si se gestionan oportunamente."
+														: "El proyecto presenta muy pocas debilidades internas, lo que favorece su ejecución."}
+										</p>
+									</div>
+									<div className="space-y-2">
+										<p className="font-bold">Estrategia CAME sugerida</p>
+										<p>
+											{Number(weaknessesScore) > 3
+												? "Las debilidades comprometen seriamente la viabilidad del proyecto si no se resuelven."
+												: Number(weaknessesScore) > 2
+													? "Varias debilidades afectan la capacidad operativa o estratégica del proyecto."
+													: Number(weaknessesScore) > 1
+														? "Hay elementos internos que deben corregirse, pero no impiden avanzar si se gestionan oportunamente."
+														: "El proyecto presenta muy pocas debilidades internas, lo que favorece su ejecución."}
+										</p>
+									</div>
+								</div>
+							</CardContent>
+						</Card>
+						<Card>
+							<CardHeader className="flex w-full flex-row justify-between text-blue-600">
+								<CardTitle>oportunidades</CardTitle>
+								<CardDescription>
+									<Badge className="bg-blue-100">{opportunitiesScore}</Badge>
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<p>
+									{Number(opportunitiesScore) > 3
+										? "El entorno ofrece múltiples oportunidades (fondos, tendencias, vacíos de mercado)."
+										: Number(opportunitiesScore) > 2
+											? "Hay oportunidades concretas que pueden impulsar el proyecto si se actúa con rapidez."
+											: Number(opportunitiesScore) > 1
+												? "Algunas oportunidades aisladas, pero sin un entorno propicio general."
+												: "Escaso o nulo potencial en el entorno. El mercado no favorece la innovación propuesta."}
+								</p>
+							</CardContent>
+						</Card>
+						<Card>
+							<CardHeader className="flex w-full flex-row justify-between text-red-600">
+								<CardTitle>amenazas</CardTitle>
+								<CardDescription>
+									<Badge className="bg-red-100">{threatsScore}</Badge>
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<p>
+									{Number(threatsScore) > 3
+										? "Amenazas externas de alto impacto. Podrían paralizar o invalidar el proyecto."
+										: Number(threatsScore) > 2
+											? "Riesgos relevantes que podrían afectar el desarrollo del proyecto."
+											: Number(threatsScore) > 1
+												? "Existen riesgos que deben considerarse, aunque son manejables."
+												: "Riesgos externos poco relevantes. Buena estabilidad del entorno."}
+								</p>
+							</CardContent>
+						</Card>
+					</div>
 
 					<div className="bg-accent/50 rounded-md p-4">
 						<h3 className="mb-2 font-semibold">Recomendación Estratégica</h3>
@@ -351,12 +466,12 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 					</TabsTrigger>
 					<TabsTrigger
 						value="debilidades"
-						className="data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+						className="inline truncate data-[state=active]:bg-amber-500 data-[state=active]:text-white">
 						debilidades
 					</TabsTrigger>
 					<TabsTrigger
 						value="oportunidades"
-						className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+						className="inline truncate data-[state=active]:bg-blue-500 data-[state=active]:text-white">
 						oportunidades
 					</TabsTrigger>
 					<TabsTrigger
@@ -415,7 +530,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 				</TabsContent>
 			</Tabs>
 
-			<Card>
+			<Card className="max-w-[600px] lg:w-[600px]">
 				<CardHeader>
 					<CardTitle>Matriz FODA</CardTitle>
 					<CardDescription>
@@ -434,10 +549,10 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 										</span>
 										<div className="mt-1 flex items-center gap-2">
 											<span className="rounded bg-green-100 px-1.5 py-0.5 text-xs text-green-800">
-												Puntaje: {(answer.importance * answer.qualification).toFixed(2)}
+												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
 											</span>
 											<span className="text-muted-foreground text-xs">
-												(I: {answer.importance.toFixed(2)} × Q: {answer.qualification})
+												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
 											</span>
 										</div>
 									</li>
@@ -455,10 +570,10 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 										</span>
 										<div className="mt-1 flex items-center gap-2">
 											<span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800">
-												Puntaje: {(answer.importance * answer.qualification).toFixed(2)}
+												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
 											</span>
 											<span className="text-muted-foreground text-xs">
-												(I: {answer.importance.toFixed(2)} × Q: {answer.qualification})
+												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
 											</span>
 										</div>
 									</li>
@@ -476,10 +591,10 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 										</span>
 										<div className="mt-1 flex items-center gap-2">
 											<span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs text-blue-800">
-												Puntaje: {(answer.importance * answer.qualification).toFixed(2)}
+												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
 											</span>
 											<span className="text-muted-foreground text-xs">
-												(I: {answer.importance.toFixed(2)} × Q: {answer.qualification})
+												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
 											</span>
 										</div>
 									</li>
@@ -497,10 +612,10 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 										</span>
 										<div className="mt-1 flex items-center gap-2">
 											<span className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
-												Puntaje: {(answer.importance * answer.qualification).toFixed(2)}
+												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
 											</span>
 											<span className="text-muted-foreground text-xs">
-												(I: {answer.importance.toFixed(2)} × Q: {answer.qualification})
+												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
 											</span>
 										</div>
 									</li>
