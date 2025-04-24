@@ -1,7 +1,15 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, HelpCircle, Info } from "lucide-react"
-import { useState } from "react"
+import {
+	AlertTriangle,
+	ChevronDown,
+	ChevronLeft,
+	ChevronRight,
+	HelpCircle,
+	Info,
+	Lock,
+} from "lucide-react"
+import { useEffect, useState } from "react"
 
 import { Button } from "@/client/components/ui/button"
 import {
@@ -12,6 +20,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/client/components/ui/card"
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/client/components/ui/collapsible"
 import {
 	Dialog,
 	DialogContent,
@@ -75,28 +88,28 @@ const fodaDefaultAnswers = {
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.5,
+			importancia: 0.25,
 			calificacion: 2,
 		})),
 	debilidades: Array.from({ length: 4 })
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.5,
+			importancia: 0.25,
 			calificacion: 2,
 		})),
 	oportunidades: Array.from({ length: 4 })
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.5,
+			importancia: 0.25,
 			calificacion: 2,
 		})),
 	amenazas: Array.from({ length: 4 })
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.5,
+			importancia: 0.25,
 			calificacion: 2,
 		})),
 }
@@ -105,8 +118,18 @@ export default function FODAForm() {
 	const [currentCategory, setCurrentCategory] = useState<FODACategory>("fortalezas")
 	const [answers, setAnswers] = useState<FODAAnswers>(fodaDefaultAnswers)
 	const [showResults, setShowResults] = useState(false)
+	const [importanceTotals, setImportanceTotals] = useState<Record<string, number>>({
+		fortalezas: 1,
+		debilidades: 1,
+		oportunidades: 1,
+		amenazas: 1,
+	})
+
+	// Add state for validation error
+	const [validationError, setValidationError] = useState<string | null>(null)
 
 	const categories: FODACategory[] = ["fortalezas", "debilidades", "oportunidades", "amenazas"]
+
 	const categoryLabels = {
 		fortalezas: "fortalezas",
 		debilidades: "debilidades",
@@ -121,6 +144,66 @@ export default function FODAForm() {
 		amenazas: "bg-red-500",
 	}
 
+	useEffect(() => {
+		const newTotals: Record<string, number> = {
+			strengths: 0,
+			weaknesses: 0,
+			opportunities: 0,
+			threats: 0,
+		}
+
+		categories.forEach((category) => {
+			newTotals[category] = answers[category].reduce((sum, answer) => sum + answer.importancia, 0)
+		})
+
+		setImportanceTotals(newTotals)
+	}, [answers])
+
+	const validateCategory = (category: FODACategory) => {
+		const validFactors = answers[category].filter((answer) => answer.factor.trim() !== "").length
+
+		// Check if we have at least 3 factors
+		if (validFactors < 3) {
+			return {
+				valid: false,
+				message: `Antes de continuar, ingresa al menos 3 factores para ${categoryLabels[category].toLowerCase()}.`,
+			}
+		}
+
+		// Check if importance total is close to 1 (allowing for small floating point errors)
+		const importanceTotal = importanceTotals[category]
+		if (Math.abs(importanceTotal - 1) > 0.01) {
+			return {
+				valid: false,
+				message: `La importancia total de ${categoryLabels[category].toLowerCase()} debe ser igual a 1. Total actual: ${importanceTotal.toFixed(2)}. Para resolver haz click en el botón "Normalizar valores"`,
+			}
+		}
+
+		setValidationError(null)
+
+		return { valid: true, message: null }
+	}
+
+	useEffect(() => {
+		const validation = validateCategory(currentCategory)
+		if (!validation.valid) {
+			setValidationError(validation.message)
+			return
+		}
+
+		setValidationError(null)
+	}, [currentCategory])
+
+	const areAllImportanceTotalsValid = () => {
+		return categories.every((category) => Math.abs(importanceTotals[category] - 1) <= 0.01)
+	}
+
+	const getInvalidCategories = () => {
+		return categories
+			.filter((category) => Math.abs(importanceTotals[category] - 1) > 0.01)
+			.map((category) => categoryLabels[category])
+			.join(", ")
+	}
 	const totalCategories = categories.length
 	const currentCategoryIndex = categories.indexOf(currentCategory)
 	const progress = ((currentCategoryIndex + 1) / totalCategories) * 100
@@ -132,7 +215,10 @@ export default function FODAForm() {
 			...newAnswers[currentCategory][index],
 			factor: value,
 		}
+
 		setAnswers(newAnswers)
+
+		validateCategory(currentCategory)
 	}
 
 	const handleImportanceChange = (value: number[], index: number) => {
@@ -155,21 +241,11 @@ export default function FODAForm() {
 		setAnswers(newAnswers)
 	}
 
-	// Add a function to validate if enough factors have been entered
-	const validateCategory = (category: FODACategory) => {
-		const validFactors = answers[category].filter((answer) => answer.factor.trim() !== "").length
-		return validFactors >= 3
-	}
-
-	// Add state for validation error
-	const [validationError, setValidationError] = useState<string | null>(null)
-
 	// Update the goToNextCategory function to include validation
 	const goToNextCategory = () => {
-		if (!validateCategory(currentCategory)) {
-			setValidationError(
-				`Please enter at least 3 factors for ${categoryLabels[currentCategory].toLowerCase()} before proceeding.`,
-			)
+		const validation = validateCategory(currentCategory)
+		if (!validation.valid) {
+			setValidationError(validation.message)
 			return
 		}
 
@@ -177,7 +253,13 @@ export default function FODAForm() {
 		if (currentCategoryIndex < categories.length - 1) {
 			setCurrentCategory(categories[currentCategoryIndex + 1])
 		} else {
-			setShowResults(true)
+			if (areAllImportanceTotalsValid()) {
+				setShowResults(true)
+			} else {
+				setValidationError(
+					` Todas las categorías deben tener valores de importancia que suman exactamente 1.0. Por favor, solucione: todas las categorías deben tener valores de importancia que suman exactamente 1.0. Por favor arregle: ${getInvalidCategories()}`,
+				)
+			}
 		}
 		window.scrollTo({ top: 0 })
 	}
@@ -223,12 +305,59 @@ export default function FODAForm() {
 		return "Crítica"
 	}
 
+	const normalizeImportance = () => {
+		const newAnswers = { ...answers }
+		const category = currentCategory
+
+		const factors = newAnswers[category]
+
+		// Calculate total importance of valid factors
+		const totalImportance = factors.reduce((sum, answer) => sum + answer.importancia, 0)
+
+		// If total is already 1 (or very close), no need to normalize
+		if (Math.abs(totalImportance - 1) < 0.01 || totalImportance === 0) {
+			return
+		}
+
+		// Normalize each valid factor's importance
+		newAnswers[category] = factors.map((answer) => ({
+			...answer,
+			importancia: totalImportance > 0 ? answer.importancia / totalImportance : 0.25,
+		}))
+
+		setValidationError(null)
+
+		setAnswers(newAnswers)
+	}
+
+	const normalizeAllCategories = () => {
+		const newAnswers = { ...answers }
+
+		categories.forEach((category) => {
+			const factors = newAnswers[category]
+			const totalImportance = factors.reduce((sum, answer) => sum + answer.importancia, 0)
+
+			// Only normalize if needed
+			if (Math.abs(totalImportance - 1) > 0.01 && totalImportance > 0) {
+				newAnswers[category] = factors.map((answer) => ({
+					...answer,
+					importancia: answer.importancia / totalImportance,
+				}))
+			}
+		})
+
+		setAnswers(newAnswers)
+		setValidationError(null)
+	}
+	const currentTotal = importanceTotals[currentCategory]
+	const isImportanceValid = Math.abs(currentTotal - 1) <= 0.01
+
 	if (showResults) {
 		return <FODAResults answers={answers} onRestart={restartAssessment} />
 	}
 
 	return (
-		<div className="text-secondary max-w-[800px] space-y-6 lg:w-[800px]">
+		<div className="text-secondary max-w-[700px] space-y-6 lg:w-[700px]">
 			<div className="flex items-center justify-between">
 				<h1 className="text-3xl font-bold">Análisis FODA</h1>
 				<Dialog>
@@ -245,7 +374,7 @@ export default function FODAForm() {
 								Comprender cómo calificar los factores en su análisis FODA{" "}
 							</DialogDescription>
 						</DialogHeader>
-						<div className="space-y-6">
+						<div className="text-secondary space-y-6">
 							<div>
 								<h3 className="mb-2 text-lg font-medium">¿Qué es un análisis FODA?</h3>
 								<p className="text-muted-foreground">
@@ -316,22 +445,55 @@ export default function FODAForm() {
 					</DialogContent>
 				</Dialog>
 			</div>
-
 			<p className="text-muted-foreground">
-				Ingrese sus propios factores y califíquelos en función de la importancia (0-1) y
-				calificación (1-4).
+				Ingrese sus propios factores y evaluelos en función de la importancia (0-1) y calificación
+				(1-4).
 			</p>
+			{!areAllImportanceTotalsValid() && (
+				<div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+					<Collapsible>
+						<div className="flex items-center justify-between">
+							<div className="flex items-center gap-2">
+								<AlertTriangle className="h-4 w-4 text-amber-500" />
+								<span className="font-medium text-amber-800">
+									Los valores de importancia necesitan ajustes en: {getInvalidCategories()}
+								</span>
+							</div>
+							<CollapsibleTrigger asChild>
+								<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+									<ChevronDown className="h-4 w-4" />
+									<span className="sr-only">Toggle details</span>
+								</Button>
+							</CollapsibleTrigger>
+						</div>
+						<CollapsibleContent className="mt-2">
+							<p className="text-sm text-amber-700">
+								Los valores de importancia para cada categoría deben sumar exactamente 1.0 antes de
+								que pueda completar el análisis. Ajuste los valores o use el botón "Normalizar
+								valores" para arreglarlos automáticamente.
+							</p>
+						</CollapsibleContent>
+					</Collapsible>
+				</div>
+			)}
 
 			<div className="space-y-2">
 				<div className="flex items-center justify-between">
 					<span className="text-sm font-medium">
 						Categoría {currentCategoryIndex + 1} de {totalCategories}
 					</span>
-					<span className="text-sm font-medium">{categoryLabels[currentCategory]}</span>
+					<div className="flex items-center gap-2">
+						<span className="text-sm font-medium">{categoryLabels[currentCategory]}</span>
+						{!isImportanceValid && (
+							<span className="inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-800">
+								<AlertTriangle className="mr-0.5 h-2.5 w-2.5" />
+								normalizar
+							</span>
+						)}
+					</div>
 				</div>
 				<Progress value={progress} className="h-2" />
 			</div>
-
 			<Card className="border-t-4">
 				<CardHeader>
 					<div
@@ -345,17 +507,37 @@ export default function FODAForm() {
 						Ingrese y califique su {categoryLabels[currentCategory].toLowerCase()}
 					</CardTitle>
 					<CardDescription>
-						Ingrese sus propios factores y califíquelos en función de la importancia y la
-						calificación.
+						Ingrese sus propios factores y evaluelos en función de la importancia y la calificación.
 					</CardDescription>
+
+					<div
+						className={`mt-4 flex items-center justify-between rounded-md p-3 ${isImportanceValid ? "border border-green-200 bg-green-50" : "border border-amber-200 bg-amber-50"}`}>
+						<div className="flex items-center gap-2">
+							{!isImportanceValid && <AlertTriangle className="h-5 w-5 text-amber-500" />}
+							<span
+								className={`font-medium ${isImportanceValid ? "text-green-700" : "text-amber-700"}`}>
+								Importancia Total: {currentTotal.toFixed(2)}/1.00
+							</span>
+						</div>
+						{!isImportanceValid && (
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={normalizeImportance}
+								className="border-amber-300 text-amber-700 hover:bg-amber-100">
+								Normalizar valores
+							</Button>
+						)}
+					</div>
 				</CardHeader>
+
 				<CardContent className="space-y-8">
 					{Array.from({ length: 4 })
 						.fill(0)
 						.map((_, index) => {
 							const currentAnswer = answers[currentCategory][index] || {
 								factor: "",
-								importance: 0.5,
+								importance: 0.25,
 								qualification: 2,
 							}
 
@@ -395,7 +577,6 @@ export default function FODAForm() {
 														</Tooltip>
 													</TooltipProvider>
 												</div>
-												<span className="text-muted-foreground text-xs">0 to 1</span>
 											</div>
 											<Slider
 												defaultValue={[currentAnswer.importancia]}
@@ -433,7 +614,6 @@ export default function FODAForm() {
 														</Tooltip>
 													</TooltipProvider>
 												</div>
-												<span className="text-muted-foreground text-xs">1 to 4</span>
 											</div>
 											<Slider
 												defaultValue={[currentAnswer.calificacion]}
@@ -458,8 +638,98 @@ export default function FODAForm() {
 				</CardContent>
 				<CardFooter className="flex flex-col gap-4">
 					{validationError && (
-						<div className="w-full rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-							{validationError}
+						<div className="w-full rounded-md border border-amber-200 bg-amber-50">
+							<Collapsible>
+								<div className="flex items-center justify-between p-2">
+									<div className="flex items-center gap-2">
+										<AlertTriangle className="h-4 w-4 text-amber-500" />
+										<span className="text-sm font-medium text-amber-800">
+											Problemas de validación
+										</span>
+									</div>
+									<CollapsibleTrigger asChild>
+										<Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+											<ChevronDown className="h-3 w-3" />
+											<span className="sr-only">Toggle details</span>
+										</Button>
+									</CollapsibleTrigger>
+								</div>
+								<CollapsibleContent className="px-3 pb-2">
+									<p className="text-xs text-amber-700">{validationError}</p>
+								</CollapsibleContent>
+							</Collapsible>
+						</div>
+					)}
+					{!areAllImportanceTotalsValid() && currentCategoryIndex === categories.length - 1 && (
+						<div className="w-full rounded-md border border-amber-200 bg-amber-50">
+							<Collapsible>
+								<div className="flex items-center justify-between p-3">
+									<div className="flex items-center gap-2">
+										<AlertTriangle className="h-4 w-4 text-amber-500" />
+										<span className="font-medium text-amber-800">
+											Cannot complete analysis due to invalid importance values
+										</span>
+									</div>
+									<div className="flex items-center gap-2">
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={normalizeAllCategories}
+											className="border-amber-300 text-amber-700 hover:bg-amber-100">
+											Normalize All
+										</Button>
+										<CollapsibleTrigger asChild>
+											<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+												<ChevronDown className="h-4 w-4" />
+												<span className="sr-only">Toggle details</span>
+											</Button>
+										</CollapsibleTrigger>
+									</div>
+								</div>
+								<CollapsibleContent className="px-3 pb-3">
+									<p className="text-sm text-amber-700">
+										You must ensure that the importance values for each category sum to exactly 1.0
+										before you can complete the analysis. Use the "Normalize All" button to
+										automatically adjust all categories.
+									</p>
+								</CollapsibleContent>
+							</Collapsible>
+						</div>
+					)}
+					{!areAllImportanceTotalsValid() && currentCategoryIndex === categories.length - 1 && (
+						<div className="w-full rounded-md border border-amber-200 bg-amber-50">
+							<Collapsible>
+								<div className="flex items-center justify-between p-3">
+									<div className="flex items-center gap-2">
+										<AlertTriangle className="h-4 w-4 text-amber-500" />
+										<span className="font-medium text-amber-800">
+											Cannot complete analysis due to invalid importance values
+										</span>
+									</div>
+									<div className="flex items-center gap-2">
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={normalizeAllCategories}
+											className="border-amber-300 text-amber-700 hover:bg-amber-100">
+											Normalize All
+										</Button>
+										<CollapsibleTrigger asChild>
+											<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+												<ChevronDown className="h-4 w-4" />
+												<span className="sr-only">Toggle details</span>
+											</Button>
+										</CollapsibleTrigger>
+									</div>
+								</div>
+								<CollapsibleContent className="px-3 pb-3">
+									<p className="text-sm text-amber-700">
+										You must ensure that the importance values for each category sum to exactly 1.0
+										before you can complete the analysis. Use the "Normalize All" button to
+										automatically adjust all categories.
+									</p>
+								</CollapsibleContent>
+							</Collapsible>
 						</div>
 					)}
 					<div className="flex w-full justify-between">
@@ -468,13 +738,22 @@ export default function FODAForm() {
 							onClick={goToPreviousCategory}
 							disabled={currentCategoryIndex === 0}>
 							<ChevronLeft className="mr-2 h-4 w-4" />
-							Categoría Anterior
+							Anterior
 						</Button>
-						<Button onClick={goToNextCategory} disabled={!validateCategory(currentCategory)}>
-							{currentCategoryIndex === categories.length - 1 ? "Terminar" : "Siguiente Categoría"}
-							<ChevronRight className="ml-2 h-4 w-4" />
+						<Button onClick={goToNextCategory}>
+							{currentCategoryIndex === categories.length - 1 ? (
+								<>
+									{!areAllImportanceTotalsValid() && <Lock className="mr-2 h-4 w-4" />}
+									Terminar análisis
+								</>
+							) : (
+								<>
+									Siguiente
+									<ChevronRight className="ml-2 h-4 w-4" />
+								</>
+							)}
 						</Button>
-					</div>
+					</div>{" "}
 				</CardFooter>
 			</Card>
 		</div>

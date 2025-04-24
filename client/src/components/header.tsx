@@ -102,17 +102,19 @@ export function Header() {
 						</Link>
 					</div>
 				) : (
-					<div className="ml-auto flex items-center gap-2">
-						<NotificationIconButton
-							ref={notifyButtonRef}
-							onClick={() => setIsVisible(!isVisible)}
-						/>
-						<NotificationFeedPopover
-							// @ts-ignore
-							buttonRef={notifyButtonRef}
-							isVisible={isVisible}
-							onClose={() => setIsVisible(false)}
-						/>
+					<div className="ml-auto flex items-center gap-4">
+						<div className="mr-5">
+							<NotificationIconButton
+								ref={notifyButtonRef}
+								onClick={() => setIsVisible(!isVisible)}
+							/>
+							<NotificationFeedPopover
+								// @ts-ignore
+								buttonRef={notifyButtonRef}
+								isVisible={isVisible}
+								onClose={() => setIsVisible(false)}
+							/>
+						</div>
 						<div className="flex flex-col items-end">
 							<span className="text-sm font-medium">
 								{data?.nombre} {data?.apellido}

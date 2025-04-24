@@ -45,13 +45,13 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 			case 1:
 				return "Pobre"
 			case 2:
-				return "Justo"
+				return "Justa"
 			case 3:
 				return "Buena"
 			case 4:
 				return "Excelente"
 			default:
-				return "Justo"
+				return "Justa"
 		}
 	}
 
@@ -68,43 +68,13 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 		return "Crítica"
 	}
 
-	const getCategoryQuestion = (category: string, index: number) => {
-		const questions: Record<string, string[]> = {
-			fortalezas: [
-				"Modelo educativo-terapéutico único, Propiedad Intelectual",
-				"Misión clara, equipo comprometido, capacitado y con roles",
-				"Impacto en la comunidad",
-				"Experiencia real, conocimiento adquirido",
-			],
-			debilidades: [
-				"Financiamiento insuficiente para crecer",
-				"Falta de comunicación de todos los servicios que podemos entregar",
-				"Procesos internos no digitalizados",
-				"Rotación del equipo",
-			],
-			oportunidades: [
-				"Ley TEA",
-				"Colaboraciones y franquicias a familias",
-				"Desarrollo de App y digitalización",
-				"Capacitaciones y talleres abiertos a público",
-			],
-			amenazas: [
-				"Cambios normativos",
-				"Eliminación de Isapres y cambios en sistema salud en Chile",
-				"Aumento de competencia en terapias",
-				"Percepción de continuidad de la organización",
-			],
-		}
-
-		return questions[category][index]
-	}
 	const handleExport = () => {
 		// Create a text representation of the FODA analysis
 		let fodaText = "FODA ANALYSIS\n\n"
 
 		fodaText += "FORTALEZAS:\n"
 		answers.fortalezas.forEach((answer, index) => {
-			fodaText += `${index + 1}. ${getCategoryQuestion("fortalezas", index)}\n`
+			fodaText += `${index + 1}. ${answer}\n`
 			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
 			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
 			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
@@ -112,7 +82,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 
 		fodaText += "\nDEBILIDADES:\n"
 		answers.debilidades.forEach((answer, index) => {
-			fodaText += `${index + 1}. ${getCategoryQuestion("debilidades", index)}\n`
+			fodaText += `${index + 1}. ${answer}\n`
 			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
 			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
 			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
@@ -120,7 +90,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 
 		fodaText += "\nOPORTUNIDADES:\n"
 		answers.oportunidades.forEach((answer, index) => {
-			fodaText += `${index + 1}. ${getCategoryQuestion("oportunidades", index)}\n`
+			fodaText += `${index + 1}. ${answer}\n`
 			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
 			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
 			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
@@ -128,7 +98,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 
 		fodaText += "\nAMENAZAS:\n"
 		answers.amenazas.forEach((answer, index) => {
-			fodaText += `${index + 1}. ${getCategoryQuestion("amenazas", index)}\n`
+			fodaText += `${index + 1}. ${answer}\n`
 			fodaText += `   Importancia: ${answer.importancia.toFixed(2)} (${getImportanceLabel(answer.importancia)})\n`
 			fodaText += `   Calificación: ${answer.calificacion} (${getQualificationLabel(answer.calificacion)})\n`
 			fodaText += `   Puntaje Ponderado: ${(answer.importancia * answer.calificacion).toFixed(2)}\n\n`
@@ -147,58 +117,61 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 	}
 
 	const renderAnswers = (category: keyof typeof answers) => {
-		return answers[category].map((answer, index) => {
-			const weightedScore = answer.importancia * answer.calificacion
+		return answers[category]
+			.map((answer, index) => {
+				if (!answer.factor.trim()) {
+					return null
+				}
 
-			return (
-				<div key={`${category}-${index}`} className="mb-6 rounded-md border p-4">
-					<h4 className="mb-2 font-medium">Factor {index + 1}</h4>
-					<p className="text-muted-foreground mb-3 text-sm">
-						{getCategoryQuestion(category, index)}
-					</p>
+				const weightedScore = answer.importancia * answer.calificacion
 
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-						<div className="bg-accent/50 rounded-md p-3">
-							<div className="text-muted-foreground mb-1 text-xs">Importancia</div>
-							<div className="flex items-center justify-between">
-								<span className="font-medium">{getImportanceLabel(answer.importancia)}</span>
-								<span className="bg-secondary rounded-md px-2 py-0.5 text-sm text-white">
-									{answer.importancia.toFixed(2)}
-								</span>
+				return (
+					<div key={`${category}-${index}`} className="mb-6 rounded-md border p-4">
+						<h4 className="mb-2 font-medium">{answer.factor}</h4>
+
+						<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+							<div className="bg-accent/50 rounded-md p-3">
+								<div className="text-muted-foreground mb-1 text-xs">Importancia</div>
+								<div className="flex items-center justify-between">
+									<span className="font-medium">{getImportanceLabel(answer.importancia)}</span>
+									<span className="bg-secondary rounded-md px-2 py-0.5 text-sm text-white">
+										{answer.importancia.toFixed(2)}
+									</span>
+								</div>
 							</div>
-						</div>
 
-						<div className="bg-accent/50 rounded-md p-3">
-							<div className="text-muted-foreground mb-1 text-xs">Calificación</div>
-							<div className="flex items-center justify-between">
-								<span className="font-medium">{getQualificationLabel(answer.calificacion)}</span>
-								<span className="bg-secondary rounded-md px-2 py-0.5 text-sm text-white">
-									{answer.calificacion}
-								</span>
+							<div className="bg-accent/50 rounded-md p-3">
+								<div className="text-muted-foreground mb-1 text-xs">Calificación</div>
+								<div className="flex items-center justify-between">
+									<span className="font-medium">{getQualificationLabel(answer.calificacion)}</span>
+									<span className="bg-secondary rounded-md px-2 py-0.5 text-sm text-white">
+										{answer.calificacion}
+									</span>
+								</div>
 							</div>
-						</div>
 
-						<div className="bg-primary/10 rounded-md p-3">
-							<div className="text-muted-foreground mb-1 text-xs">Puntaje Ponderado</div>
-							<div className="flex items-center justify-between">
-								<span className="font-medium">
-									{weightedScore < 1
-										? "Bajo"
-										: weightedScore < 2
-											? "Medio"
-											: weightedScore < 3
-												? "Alto"
-												: "Muy Alto"}
-								</span>
-								<span className="bg-primary text-secondary rounded-md px-2 py-0.5 text-sm">
-									{weightedScore.toFixed(2)}
-								</span>
+							<div className="bg-primary/10 rounded-md p-3">
+								<div className="text-muted-foreground mb-1 text-xs">Puntaje Ponderado</div>
+								<div className="flex items-center justify-between">
+									<span className="font-medium">
+										{weightedScore < 1
+											? "Bajo"
+											: weightedScore < 2
+												? "Medio"
+												: weightedScore < 3
+													? "Alto"
+													: "Muy Alto"}
+									</span>
+									<span className="bg-primary text-secondary rounded-md px-2 py-0.5 text-sm">
+										{weightedScore.toFixed(2)}
+									</span>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			)
-		})
+				)
+			})
+			.filter(Boolean) // filter out null values
 	}
 
 	const calculateCategoryScore = (category: keyof typeof answers) => {
@@ -221,6 +194,68 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 		opportunitiesScore -
 		(weaknessesScore + threatsScore)
 	).toFixed(2)
+
+	const getInterpretaciones = (factor: string, puntaje: number): string => {
+		const interpretacion: Record<string, string[]> = {
+			fortalezas: [
+				"No se identifican capacidades internas significativas. El proyecto necesita construir competencias clave.",
+				"Hay algunas capacidades internas, pero no suficientes para competir con éxito.",
+				"Existen fortalezas claras que pueden ser aprovechadas si se alinean con oportunidades.",
+				"El proyecto cuenta con fortalezas robustas que le permiten destacarse o liderar en su área.",
+			],
+			debilidades: [
+				"Las debilidades comprometen seriamente la viabilidad del proyecto si no se resuelven.",
+				"Varias debilidades afectan la capacidad operativa o estratégica del proyecto.",
+				"Hay elementos internos que deben corregirse, pero no impiden avanzar si se gestionan oportunamente.",
+				"El proyecto presenta muy pocas debilidades internas, lo que favorece su ejecución.",
+			],
+			oportunidades: [
+				"Escaso o nulo potencial en el entorno. El mercado no favorece la innovación propuesta.",
+				"Algunas oportunidades aisladas, pero sin un entorno propicio general.",
+				"Hay oportunidades concretas que pueden impulsar el proyecto si se actúa con rapidez.",
+				"El entorno ofrece múltiples oportunidades (fondos, tendencias, vacíos de mercado).",
+			],
+			amenazas: [
+				"Riesgos externos poco relevantes. Buena estabilidad del entorno.",
+				"Existen riesgos que deben considerarse, aunque son manejables.",
+				"Riesgos relevantes que podrían afectar el desarrollo del proyecto.",
+				"Amenazas externas de alto impacto. Podrían paralizar o invalidar el proyecto.",
+			],
+		}
+
+		return interpretacion[factor][Math.floor(puntaje)]
+	}
+
+	const getCameEvaluacion = (factor: string, puntaje: number): string => {
+		const evaluacion: Record<string, string[]> = {
+			fortalezas: [
+				"Desarrollar o sustituir capacidades.",
+				"Corregir y fortalecer áreas clave.",
+				"Mantener y profesionalizar.",
+				"Mantener y consolidar ventajas.",
+			],
+			debilidades: [
+				"Mantener procesos y buenas prácticas.",
+				"Corregir debilidades específicas.",
+				"Corregir con urgencia.",
+				"Replantear estrategia o rediseñar.",
+			],
+			oportunidades: [
+				"Revisar propuesta de valor.",
+				"Enfocar recursos estratégicamente.",
+				"Explotar activamente.",
+				"Explotar con agresividad y enfoque.",
+			],
+			amenazas: [
+				"Mantener monitoreo mínimo.",
+				"Afrontar con planes de contingencia.",
+				"Afrontar con acciones preventivas.",
+				"Redefinir estrategia o replantear.",
+			],
+		}
+
+		return evaluacion[factor][Math.floor(puntaje)]
+	}
 
 	return (
 		<div className="space-y-6">
@@ -290,7 +325,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 						</div>
 
 						<div className="space-y-4">
-							<h3 className="text-lg font-semibold">Strategic Position</h3>
+							<h3 className="text-lg font-semibold">Posición Estratégica</h3>
 							<div className="space-y-3">
 								<div className="flex items-center justify-between">
 									<span className="font-medium">Factores Internos (F-D):</span>
@@ -328,137 +363,100 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 							</div>
 						</div>
 					</div>
-					<div className="bg-accent/50 my-2 space-y-4 rounded-md p-4">
-						<h3 className="mb-2 font-semibold">Interpretación Estratégica y recomendaciones</h3>
-						<Card>
-							<CardHeader className="flex w-full flex-row justify-between text-green-600">
-								<CardTitle>fortalezas</CardTitle>
-								<CardDescription>
-									<Badge className="bg-green-100">{strengthsScore}</Badge>
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<div className="flex flex-col gap-2">
-									<div className="space-y-2">
-										<p className="font-bold">Interpretación estratégica</p>
-										<p>
-											{Number(strengthsScore) > 3
-												? "El proyecto cuenta con fortalezas robustas que le permiten destacarse o liderar en su área."
-												: Number(strengthsScore) > 2
-													? "Existen fortalezas claras que pueden ser aprovechadas si se alinean con oportunidades."
-													: Number(strengthsScore) > 1
-														? "Hay algunas capacidades internas, pero no suficientes para competir con éxito."
-														: "No se identifican capacidades internas significativas. El proyecto necesita construir coompetencias clave."}
-										</p>
-									</div>
-									<div className="w space-y-2">
-										<p className="font-bold">Estrategia CAME sugerida</p>
-										<p>
-											{Number(strengthsScore) > 3
-												? "El proyecto cuenta con fortalezas robustas que le permiten destacarse o liderar en su área."
-												: Number(strengthsScore) > 2
-													? "Existen fortalezas claras que pueden ser aprovechadas si se alinean con oportunidades."
-													: Number(strengthsScore) > 1
-														? "Hay algunas capacidades internas, pero no suficientes para competir con éxito."
-														: "No se identifican capacidades internas significativas. El proyecto necesita construir coompetencias clave."}
-										</p>
-									</div>
-								</div>
-							</CardContent>
-						</Card>
-						<Card>
-							<CardHeader className="flex w-full flex-row justify-between text-amber-600">
-								<CardTitle>debilidades</CardTitle>
-								<CardDescription>
-									<Badge className="bg-amber-100">{weaknessesScore}</Badge>
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<div className="flex flex-col gap-2">
-									<div className="space-y-2">
-										<p className="font-bold">Interpretación estratégica</p>
-										<p>
-											{Number(weaknessesScore) > 3
-												? "Las debilidades comprometen seriamente la viabilidad del proyecto si no se resuelven."
-												: Number(weaknessesScore) > 2
-													? "Varias debilidades afectan la capacidad operativa o estratégica del proyecto."
-													: Number(weaknessesScore) > 1
-														? "Hay elementos internos que deben corregirse, pero no impiden avanzar si se gestionan oportunamente."
-														: "El proyecto presenta muy pocas debilidades internas, lo que favorece su ejecución."}
-										</p>
-									</div>
-									<div className="space-y-2">
-										<p className="font-bold">Estrategia CAME sugerida</p>
-										<p>
-											{Number(weaknessesScore) > 3
-												? "Las debilidades comprometen seriamente la viabilidad del proyecto si no se resuelven."
-												: Number(weaknessesScore) > 2
-													? "Varias debilidades afectan la capacidad operativa o estratégica del proyecto."
-													: Number(weaknessesScore) > 1
-														? "Hay elementos internos que deben corregirse, pero no impiden avanzar si se gestionan oportunamente."
-														: "El proyecto presenta muy pocas debilidades internas, lo que favorece su ejecución."}
-										</p>
-									</div>
-								</div>
-							</CardContent>
-						</Card>
-						<Card>
-							<CardHeader className="flex w-full flex-row justify-between text-blue-600">
-								<CardTitle>oportunidades</CardTitle>
-								<CardDescription>
-									<Badge className="bg-blue-100">{opportunitiesScore}</Badge>
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<p>
-									{Number(opportunitiesScore) > 3
-										? "El entorno ofrece múltiples oportunidades (fondos, tendencias, vacíos de mercado)."
-										: Number(opportunitiesScore) > 2
-											? "Hay oportunidades concretas que pueden impulsar el proyecto si se actúa con rapidez."
-											: Number(opportunitiesScore) > 1
-												? "Algunas oportunidades aisladas, pero sin un entorno propicio general."
-												: "Escaso o nulo potencial en el entorno. El mercado no favorece la innovación propuesta."}
-								</p>
-							</CardContent>
-						</Card>
-						<Card>
-							<CardHeader className="flex w-full flex-row justify-between text-red-600">
-								<CardTitle>amenazas</CardTitle>
-								<CardDescription>
-									<Badge className="bg-red-100">{threatsScore}</Badge>
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<p>
-									{Number(threatsScore) > 3
-										? "Amenazas externas de alto impacto. Podrían paralizar o invalidar el proyecto."
-										: Number(threatsScore) > 2
-											? "Riesgos relevantes que podrían afectar el desarrollo del proyecto."
-											: Number(threatsScore) > 1
-												? "Existen riesgos que deben considerarse, aunque son manejables."
-												: "Riesgos externos poco relevantes. Buena estabilidad del entorno."}
-								</p>
-							</CardContent>
-						</Card>
-					</div>
+				</CardContent>
+			</Card>
 
-					<div className="bg-accent/50 rounded-md p-4">
-						<h3 className="mb-2 font-semibold">Recomendación Estratégica</h3>
-						<p>
-							{Number(overallScore) > 1
-								? "Tu posición es fuerte. Concéntrese en aprovechar fortalezas y oportunidadas para el crecimiento."
-								: Number(overallScore) > 0
-									? "Su posición es moderadamente favorable. Trabaje para mejorar las fortalezas mientras aborda las debilidades clave."
-									: Number(overallScore) > -1
-										? "Su posición enfrenta desafíos. Aborde las debilidades críticas y mitigue las amenazas."
-										: "Su posición requiere una mejora significativa. Considere los pivotes estratégicos o la reestructuración."}
-						</p>
-					</div>
+			<Card className="max-w-[800px] lg:w-[800px]">
+				<CardHeader>
+					<CardTitle>Interpretación Estratégica y recomendaciones</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-6">
+					<Card>
+						<CardHeader className="flex w-full flex-row justify-between text-green-600">
+							<CardTitle>fortalezas</CardTitle>
+							<CardDescription>
+								<Badge className="bg-green-100">{strengthsScore}</Badge>
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+								<div className="space-y-2">
+									<p className="font-bold">Interpretación estratégica</p>
+									<p>{getInterpretaciones("fortalezas", strengthsScore)}</p>
+								</div>
+								<div className="w space-y-2">
+									<p className="font-bold">Estrategia CAME sugerida</p>
+									<p>{getCameEvaluacion("fortalezas", strengthsScore)}</p>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+					<Card>
+						<CardHeader className="flex w-full flex-row justify-between text-amber-600">
+							<CardTitle>debilidades</CardTitle>
+							<CardDescription>
+								<Badge className="bg-amber-100">{weaknessesScore}</Badge>
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+								<div className="space-y-2">
+									<p className="font-bold">Interpretación estratégica</p>
+									<p>{getInterpretaciones("debilidades", weaknessesScore)}</p>
+								</div>
+								<div className="space-y-2">
+									<p className="font-bold">Estrategia CAME sugerida</p>
+									<p>{getCameEvaluacion("debilidades", weaknessesScore)}</p>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+					<Card>
+						<CardHeader className="flex w-full flex-row justify-between text-blue-600">
+							<CardTitle>oportunidades</CardTitle>
+							<CardDescription>
+								<Badge className="bg-blue-100">{opportunitiesScore}</Badge>
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+								<div className="space-y-2">
+									<p className="font-bold">Interpretación estratégica</p>
+									<p>{getInterpretaciones("oportunidades", opportunitiesScore)}</p>
+								</div>
+								<div className="space-y-2">
+									<p className="font-bold">Estrategia CAME sugerida</p>
+									{getCameEvaluacion("oportunidades", opportunitiesScore)}
+									<p></p>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+					<Card>
+						<CardHeader className="flex w-full flex-row justify-between text-red-600">
+							<CardTitle>amenazas</CardTitle>
+							<CardDescription>
+								<Badge className="bg-red-100">{threatsScore}</Badge>
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+								<div className="space-y-2">
+									<p className="font-bold">Interpretación estratégica</p>
+									<p>{getInterpretaciones("amenazas", threatsScore)}</p>
+								</div>
+								<div className="space-y-2">
+									<p className="font-bold">Estrategia CAME sugerida</p>
+									<p>{getCameEvaluacion("amenazas", threatsScore)}</p>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
 				</CardContent>
 			</Card>
 
 			<Tabs defaultValue="fortalezas">
-				<TabsList className="mb-4 grid grid-cols-4">
+				<TabsList className="bg-accent grid w-full grid-cols-4">
 					<TabsTrigger
 						value="fortalezas"
 						className="data-[state=active]:bg-green-500 data-[state=active]:text-white">
@@ -530,7 +528,7 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 				</TabsContent>
 			</Tabs>
 
-			<Card className="max-w-[600px] lg:w-[600px]">
+			<Card className="max-w-[800px] lg:w-[800px]">
 				<CardHeader>
 					<CardTitle>Matriz FODA</CardTitle>
 					<CardDescription>
@@ -538,88 +536,88 @@ export function FODAResults({ answers, onRestart }: FODAResultsProps) {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 						<div className="rounded-md border bg-green-50 p-4">
 							<h3 className="mb-2 font-bold text-green-600">fortalezas</h3>
 							<ul className="list-disc space-y-2 pl-5">
-								{answers.fortalezas.map((answer, index) => (
-									<li key={`strength-${index}`} className="text-sm">
-										<span className="font-medium">
-											{getCategoryQuestion("fortalezas", index).substring(0, 60)}...
-										</span>
-										<div className="mt-1 flex items-center gap-2">
-											<span className="rounded bg-green-100 px-1.5 py-0.5 text-xs text-green-800">
-												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
-											</span>
-											<span className="text-muted-foreground text-xs">
-												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
-											</span>
-										</div>
-									</li>
-								))}
+								{answers.fortalezas
+									.filter((answer) => answer.factor.trim())
+									.map((answer, index) => (
+										<li key={`strength-${index}`} className="text-sm">
+											<span className="w-full font-medium">{answer.factor}</span>
+											<div className="mt-1 flex items-center gap-2">
+												<span className="rounded bg-green-100 px-1.5 py-0.5 text-xs text-green-800">
+													Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
+												</span>
+												<span className="text-muted-foreground text-xs">
+													(I: {answer.importancia.toFixed(2)} × C: {answer.calificacion})
+												</span>
+											</div>
+										</li>
+									))}
 							</ul>
 						</div>
 
 						<div className="rounded-md border bg-amber-50 p-4">
 							<h3 className="mb-2 font-bold text-amber-600">debilidades</h3>
 							<ul className="list-disc space-y-2 pl-5">
-								{answers.debilidades.map((answer, index) => (
-									<li key={`weakness-${index}`} className="text-sm">
-										<span className="font-medium">
-											{getCategoryQuestion("debilidades", index).substring(0, 60)}...
-										</span>
-										<div className="mt-1 flex items-center gap-2">
-											<span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800">
-												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
-											</span>
-											<span className="text-muted-foreground text-xs">
-												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
-											</span>
-										</div>
-									</li>
-								))}
+								{answers.debilidades
+									.filter((answer) => answer.factor.trim())
+									.map((answer, index) => (
+										<li key={`weakness-${index}`} className="text-sm">
+											<span className="w-full font-medium">{answer.factor}</span>
+											<div className="mt-1 flex items-center gap-2">
+												<span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800">
+													Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
+												</span>
+												<span className="text-muted-foreground text-xs">
+													(I: {answer.importancia.toFixed(2)} × C: {answer.calificacion})
+												</span>
+											</div>
+										</li>
+									))}
 							</ul>
 						</div>
 
 						<div className="rounded-md border bg-blue-50 p-4">
 							<h3 className="mb-2 font-bold text-blue-600">oportunidades</h3>
 							<ul className="list-disc space-y-2 pl-5">
-								{answers.oportunidades.map((answer, index) => (
-									<li key={`opportunity-${index}`} className="text-sm">
-										<span className="font-medium">
-											{getCategoryQuestion("oportunidades", index).substring(0, 60)}...
-										</span>
-										<div className="mt-1 flex items-center gap-2">
-											<span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs text-blue-800">
-												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
-											</span>
-											<span className="text-muted-foreground text-xs">
-												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
-											</span>
-										</div>
-									</li>
-								))}
+								{answers.oportunidades
+									.filter((answer) => answer.factor.trim())
+									.map((answer, index) => (
+										<li key={`opportunity-${index}`} className="text-sm">
+											<span className="w-full font-medium">{answer.factor}</span>
+											<div className="mt-1 flex items-center gap-2">
+												<span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs text-blue-800">
+													Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
+												</span>
+												<span className="text-muted-foreground text-xs">
+													(I: {answer.importancia.toFixed(2)} × C: {answer.calificacion})
+												</span>
+											</div>
+										</li>
+									))}
 							</ul>
 						</div>
 
 						<div className="rounded-md border bg-red-50 p-4">
 							<h3 className="mb-2 font-bold text-red-600">amenazas</h3>
 							<ul className="list-disc space-y-2 pl-5">
-								{answers.amenazas.map((answer, index) => (
-									<li key={`threat-${index}`} className="text-sm">
-										<span className="font-medium">
-											{getCategoryQuestion("amenazas", index).substring(0, 60)}...
-										</span>
-										<div className="mt-1 flex items-center gap-2">
-											<span className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
-												Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
-											</span>
-											<span className="text-muted-foreground text-xs">
-												(I: {answer.importancia.toFixed(2)} × Q: {answer.calificacion})
-											</span>
-										</div>
-									</li>
-								))}
+								{answers.amenazas
+									.filter((answer) => answer.factor.trim())
+									.map((answer, index) => (
+										<li key={`threat-${index}`} className="text-sm">
+											<span className="w-full font-medium">{answer.factor}</span>
+											<div className="mt-1 flex items-center gap-2">
+												<span className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
+													Puntaje: {(answer.importancia * answer.calificacion).toFixed(2)}
+												</span>
+												<span className="text-muted-foreground text-xs">
+													(I: {answer.importancia.toFixed(2)} × C: {answer.calificacion})
+												</span>
+											</div>
+										</li>
+									))}
 							</ul>
 						</div>
 					</div>

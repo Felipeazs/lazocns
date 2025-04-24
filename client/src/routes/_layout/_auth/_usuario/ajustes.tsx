@@ -67,7 +67,7 @@ function RouteComponent() {
 	})
 
 	return (
-		<div className="space-y-6">
+		<div className="max-w-[700px] space-y-6 lg:w-[700px]">
 			<div className="flex w-full gap-2">
 				<Avatar
 					onClick={() => hiddenFileInput.current?.click()}

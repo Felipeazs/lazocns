@@ -19,7 +19,9 @@ import { Route as LayoutAuthImport } from './routes/_layout/_auth'
 import { Route as LayoutPasswordResetImport } from './routes/_layout/password/reset'
 import { Route as LayoutPasswordForgotImport } from './routes/_layout/password/forgot'
 import { Route as LayoutAuthUsuarioImport } from './routes/_layout/_auth/_usuario'
+import { Route as LayoutAuthUsuarioVrioImport } from './routes/_layout/_auth/_usuario/vrio'
 import { Route as LayoutAuthUsuarioPanelImport } from './routes/_layout/_auth/_usuario/panel'
+import { Route as LayoutAuthUsuarioOrgImport } from './routes/_layout/_auth/_usuario/org'
 import { Route as LayoutAuthUsuarioFodaImport } from './routes/_layout/_auth/_usuario/foda'
 import { Route as LayoutAuthUsuarioAjustesImport } from './routes/_layout/_auth/_usuario/ajustes'
 
@@ -70,9 +72,21 @@ const LayoutAuthUsuarioRoute = LayoutAuthUsuarioImport.update({
   getParentRoute: () => LayoutAuthRoute,
 } as any)
 
+const LayoutAuthUsuarioVrioRoute = LayoutAuthUsuarioVrioImport.update({
+  id: '/vrio',
+  path: '/vrio',
+  getParentRoute: () => LayoutAuthUsuarioRoute,
+} as any)
+
 const LayoutAuthUsuarioPanelRoute = LayoutAuthUsuarioPanelImport.update({
   id: '/panel',
   path: '/panel',
+  getParentRoute: () => LayoutAuthUsuarioRoute,
+} as any)
+
+const LayoutAuthUsuarioOrgRoute = LayoutAuthUsuarioOrgImport.update({
+  id: '/org',
+  path: '/org',
   getParentRoute: () => LayoutAuthUsuarioRoute,
 } as any)
 
@@ -162,11 +176,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAuthUsuarioFodaImport
       parentRoute: typeof LayoutAuthUsuarioImport
     }
+    '/_layout/_auth/_usuario/org': {
+      id: '/_layout/_auth/_usuario/org'
+      path: '/org'
+      fullPath: '/org'
+      preLoaderRoute: typeof LayoutAuthUsuarioOrgImport
+      parentRoute: typeof LayoutAuthUsuarioImport
+    }
     '/_layout/_auth/_usuario/panel': {
       id: '/_layout/_auth/_usuario/panel'
       path: '/panel'
       fullPath: '/panel'
       preLoaderRoute: typeof LayoutAuthUsuarioPanelImport
+      parentRoute: typeof LayoutAuthUsuarioImport
+    }
+    '/_layout/_auth/_usuario/vrio': {
+      id: '/_layout/_auth/_usuario/vrio'
+      path: '/vrio'
+      fullPath: '/vrio'
+      preLoaderRoute: typeof LayoutAuthUsuarioVrioImport
       parentRoute: typeof LayoutAuthUsuarioImport
     }
   }
@@ -177,13 +205,17 @@ declare module '@tanstack/react-router' {
 interface LayoutAuthUsuarioRouteChildren {
   LayoutAuthUsuarioAjustesRoute: typeof LayoutAuthUsuarioAjustesRoute
   LayoutAuthUsuarioFodaRoute: typeof LayoutAuthUsuarioFodaRoute
+  LayoutAuthUsuarioOrgRoute: typeof LayoutAuthUsuarioOrgRoute
   LayoutAuthUsuarioPanelRoute: typeof LayoutAuthUsuarioPanelRoute
+  LayoutAuthUsuarioVrioRoute: typeof LayoutAuthUsuarioVrioRoute
 }
 
 const LayoutAuthUsuarioRouteChildren: LayoutAuthUsuarioRouteChildren = {
   LayoutAuthUsuarioAjustesRoute: LayoutAuthUsuarioAjustesRoute,
   LayoutAuthUsuarioFodaRoute: LayoutAuthUsuarioFodaRoute,
+  LayoutAuthUsuarioOrgRoute: LayoutAuthUsuarioOrgRoute,
   LayoutAuthUsuarioPanelRoute: LayoutAuthUsuarioPanelRoute,
+  LayoutAuthUsuarioVrioRoute: LayoutAuthUsuarioVrioRoute,
 }
 
 const LayoutAuthUsuarioRouteWithChildren =
@@ -231,7 +263,9 @@ export interface FileRoutesByFullPath {
   '/password/reset': typeof LayoutPasswordResetRoute
   '/ajustes': typeof LayoutAuthUsuarioAjustesRoute
   '/foda': typeof LayoutAuthUsuarioFodaRoute
+  '/org': typeof LayoutAuthUsuarioOrgRoute
   '/panel': typeof LayoutAuthUsuarioPanelRoute
+  '/vrio': typeof LayoutAuthUsuarioVrioRoute
 }
 
 export interface FileRoutesByTo {
@@ -243,7 +277,9 @@ export interface FileRoutesByTo {
   '/password/reset': typeof LayoutPasswordResetRoute
   '/ajustes': typeof LayoutAuthUsuarioAjustesRoute
   '/foda': typeof LayoutAuthUsuarioFodaRoute
+  '/org': typeof LayoutAuthUsuarioOrgRoute
   '/panel': typeof LayoutAuthUsuarioPanelRoute
+  '/vrio': typeof LayoutAuthUsuarioVrioRoute
 }
 
 export interface FileRoutesById {
@@ -258,7 +294,9 @@ export interface FileRoutesById {
   '/_layout/password/reset': typeof LayoutPasswordResetRoute
   '/_layout/_auth/_usuario/ajustes': typeof LayoutAuthUsuarioAjustesRoute
   '/_layout/_auth/_usuario/foda': typeof LayoutAuthUsuarioFodaRoute
+  '/_layout/_auth/_usuario/org': typeof LayoutAuthUsuarioOrgRoute
   '/_layout/_auth/_usuario/panel': typeof LayoutAuthUsuarioPanelRoute
+  '/_layout/_auth/_usuario/vrio': typeof LayoutAuthUsuarioVrioRoute
 }
 
 export interface FileRouteTypes {
@@ -272,7 +310,9 @@ export interface FileRouteTypes {
     | '/password/reset'
     | '/ajustes'
     | '/foda'
+    | '/org'
     | '/panel'
+    | '/vrio'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -283,7 +323,9 @@ export interface FileRouteTypes {
     | '/password/reset'
     | '/ajustes'
     | '/foda'
+    | '/org'
     | '/panel'
+    | '/vrio'
   id:
     | '__root__'
     | '/_layout'
@@ -296,7 +338,9 @@ export interface FileRouteTypes {
     | '/_layout/password/reset'
     | '/_layout/_auth/_usuario/ajustes'
     | '/_layout/_auth/_usuario/foda'
+    | '/_layout/_auth/_usuario/org'
     | '/_layout/_auth/_usuario/panel'
+    | '/_layout/_auth/_usuario/vrio'
   fileRoutesById: FileRoutesById
 }
 
@@ -357,7 +401,9 @@ export const routeTree = rootRoute
       "children": [
         "/_layout/_auth/_usuario/ajustes",
         "/_layout/_auth/_usuario/foda",
-        "/_layout/_auth/_usuario/panel"
+        "/_layout/_auth/_usuario/org",
+        "/_layout/_auth/_usuario/panel",
+        "/_layout/_auth/_usuario/vrio"
       ]
     },
     "/_layout/password/forgot": {
@@ -376,8 +422,16 @@ export const routeTree = rootRoute
       "filePath": "_layout/_auth/_usuario/foda.tsx",
       "parent": "/_layout/_auth/_usuario"
     },
+    "/_layout/_auth/_usuario/org": {
+      "filePath": "_layout/_auth/_usuario/org.tsx",
+      "parent": "/_layout/_auth/_usuario"
+    },
     "/_layout/_auth/_usuario/panel": {
       "filePath": "_layout/_auth/_usuario/panel.tsx",
+      "parent": "/_layout/_auth/_usuario"
+    },
+    "/_layout/_auth/_usuario/vrio": {
+      "filePath": "_layout/_auth/_usuario/vrio.tsx",
       "parent": "/_layout/_auth/_usuario"
     }
   }

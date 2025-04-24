@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router"
-import { FileBarChart, Home, Settings } from "lucide-react"
+import { BarChart, Gauge, Grid3x3, Home, Settings } from "lucide-react"
 
 import { cn } from "../lib/utils"
 import {
@@ -21,7 +21,17 @@ const items = [
 	{
 		title: "FODA",
 		url: "/foda",
-		icon: FileBarChart,
+		icon: BarChart,
+	},
+	{
+		title: "VRIO",
+		url: "/vrio",
+		icon: Grid3x3,
+	},
+	{
+		title: "Organizacional",
+		url: "/org",
+		icon: Gauge,
 	},
 	{
 		title: "Ajustes",

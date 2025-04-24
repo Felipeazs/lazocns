@@ -37,7 +37,7 @@ function AuthRoute() {
 			<SidebarProvider>
 				<AppSidebar />
 				<div className="bg-accent w-full">
-					<main className="bg-accent flex w-[98%] flex-col items-center p-5 text-xs md:items-start lg:w-[60%] lg:justify-start lg:text-sm xl:w-[60%] 2xl:w-[40%]">
+					<main className="bg-accent text-secondary flex w-[98%] flex-col items-center p-5 text-xs md:items-start lg:w-[60%] lg:justify-start lg:text-sm xl:w-[60%] 2xl:w-[40%]">
 						<Outlet />
 					</main>
 				</div>

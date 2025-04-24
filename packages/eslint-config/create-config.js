@@ -39,6 +39,7 @@ export default function createConfig(options, ...userConfigs) {
 				"style/operator-linebreak": "off",
 				"style/multiline-ternary": "off",
 				"style/indent-binary-ops": "off",
+				"style/jsx-curly-newline": "off",
 				"react-hooks/exhaustive-deps": "off",
 				"react/no-array-index-key": "off",
 				"unused-imports/no-unused-vars": "off",
