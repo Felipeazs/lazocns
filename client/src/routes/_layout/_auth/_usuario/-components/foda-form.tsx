@@ -6,11 +6,16 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	HelpCircle,
-	Info,
 	Lock,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
+import {
+	FODAGuide,
+	ImportanceInfo,
+	ImportanceWarning,
+	QualificationInfo,
+} from "@/client/components/helpers"
 import { Button } from "@/client/components/ui/button"
 import {
 	Card,
@@ -25,23 +30,10 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/client/components/ui/collapsible"
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/client/components/ui/dialog"
+import { Dialog, DialogTrigger } from "@/client/components/ui/dialog"
 import { Input } from "@/client/components/ui/input"
 import { Progress } from "@/client/components/ui/progress"
 import { Slider } from "@/client/components/ui/slider"
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/client/components/ui/tooltip"
 import { cn } from "@/client/lib/utils"
 
 import { FODAResults } from "./foda-results"
@@ -330,25 +322,6 @@ export default function FODAForm() {
 		setAnswers(newAnswers)
 	}
 
-	const normalizeAllCategories = () => {
-		const newAnswers = { ...answers }
-
-		categories.forEach((category) => {
-			const factors = newAnswers[category]
-			const totalImportance = factors.reduce((sum, answer) => sum + answer.importancia, 0)
-
-			// Only normalize if needed
-			if (Math.abs(totalImportance - 1) > 0.01 && totalImportance > 0) {
-				newAnswers[category] = factors.map((answer) => ({
-					...answer,
-					importancia: answer.importancia / totalImportance,
-				}))
-			}
-		})
-
-		setAnswers(newAnswers)
-		setValidationError(null)
-	}
 	const currentTotal = importanceTotals[currentCategory]
 	const isImportanceValid = Math.abs(currentTotal - 1) <= 0.01
 
@@ -367,115 +340,13 @@ export default function FODAForm() {
 							<span>Ayuda</span>
 						</Button>
 					</DialogTrigger>
-					<DialogContent className="sm:max-w-md">
-						<DialogHeader>
-							<DialogTitle>Guía Análisis FODA</DialogTitle>
-							<DialogDescription>
-								Comprender cómo calificar los factores en su análisis FODA{" "}
-							</DialogDescription>
-						</DialogHeader>
-						<div className="text-secondary space-y-6">
-							<div>
-								<h3 className="mb-2 text-lg font-medium">¿Qué es un análisis FODA?</h3>
-								<p className="text-muted-foreground">
-									El análisis de FODA (Fortaleza, debilidas, Oportunidades, Amenaza) lo ayuda a
-									identificar factores internos y externos que afectan su proyecto u organización.
-								</p>
-							</div>
-
-							<div>
-								<h3 className="mb-2 text-lg font-medium">Importancia (0-1)</h3>
-								<p className="text-muted-foreground mb-2">
-									La importancia mide cuán significativo es un factor para su éxito:
-								</p>
-								<ul className="text-muted-foreground list-disc space-y-1 pl-5">
-									<li>
-										<span className="font-medium">0.00-0.25 (Baja)</span>: Impacto mínimo en los
-										resultados
-									</li>
-									<li>
-										<span className="font-medium">0.26-0.50 (Moderada)</span>: Notable pero no
-										crítico
-									</li>
-									<li>
-										<span className="font-medium">0.51-0.75 (Alta)</span>: Impacto significativo en
-										el éxito
-									</li>
-									<li>
-										<span className="font-medium">0.76-1.00 (Crítica)</span>: Esencial para el éxito
-										o el fracaso
-									</li>
-								</ul>
-							</div>
-
-							<div>
-								<h3 className="mb-2 text-lg font-medium">Calificación (1-4)</h3>
-								<p className="text-muted-foreground mb-2">
-									La calificación mide qué tan bien se desempeña en esta área:
-								</p>
-								<ul className="text-muted-foreground list-disc space-y-1 pl-5">
-									<li>
-										<span className="font-medium">1 (Pobre)</span>: Desventaja o debilidad
-										significativa
-									</li>
-									<li>
-										<span className="font-medium">2 (Justa)</span>: Rendimiento por debajo del
-										promedio
-									</li>
-									<li>
-										<span className="font-medium">3 (Buena)</span>: Rendimiento superior al promedio
-									</li>
-									<li>
-										<span className="font-medium">4 (Excelente)</span>: Rendimiento o ventaja
-										sobresaliente
-									</li>
-								</ul>
-							</div>
-
-							<div>
-								<h3 className="mb-2 text-lg font-medium">Puntaje Ponderado</h3>
-								<p className="text-muted-foreground">
-									El puntaje ponderado (importancia × calificación) ayuda a priorizar los factores.
-									Los puntajes más altos para Fortaleza y Oportunidadas son mejores, mientras que
-									los puntajes más altos para debilidas y amenaza indican áreas que necesitan
-									atención.
-								</p>
-							</div>
-						</div>
-					</DialogContent>
+					<FODAGuide />
 				</Dialog>
 			</div>
 			<p className="text-muted-foreground">
 				Ingrese sus propios factores y evaluelos en función de la importancia (0-1) y calificación
 				(1-4).
 			</p>
-			{!areAllImportanceTotalsValid() && (
-				<div className="rounded-md border border-amber-200 bg-amber-50 p-3">
-					<Collapsible>
-						<div className="flex items-center justify-between">
-							<div className="flex items-center gap-2">
-								<AlertTriangle className="h-4 w-4 text-amber-500" />
-								<span className="font-medium text-amber-800">
-									Los valores de importancia necesitan ajustes en: {getInvalidCategories()}
-								</span>
-							</div>
-							<CollapsibleTrigger asChild>
-								<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-									<ChevronDown className="h-4 w-4" />
-									<span className="sr-only">Toggle details</span>
-								</Button>
-							</CollapsibleTrigger>
-						</div>
-						<CollapsibleContent className="mt-2">
-							<p className="text-sm text-amber-700">
-								Los valores de importancia para cada categoría deben sumar exactamente 1.0 antes de
-								que pueda completar el análisis. Ajuste los valores o use el botón "Normalizar
-								valores" para arreglarlos automáticamente.
-							</p>
-						</CollapsibleContent>
-					</Collapsible>
-				</div>
-			)}
 
 			<div className="space-y-2">
 				<div className="flex items-center justify-between">
@@ -484,12 +355,10 @@ export default function FODAForm() {
 					</span>
 					<div className="flex items-center gap-2">
 						<span className="text-sm font-medium">{categoryLabels[currentCategory]}</span>
-						{!isImportanceValid && (
-							<span className="inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-800">
-								<AlertTriangle className="mr-0.5 h-2.5 w-2.5" />
-								normalizar
-							</span>
-						)}
+						<span
+							className={`items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-800 transition-all transition-discrete ${!isImportanceValid ? "inline-flex" : "opacity-0"}`}>
+							<AlertTriangle className="mr-0.5 h-3.5 w-3.5" />
+						</span>
 					</div>
 				</div>
 				<Progress value={progress} className="h-2" />
@@ -512,12 +381,13 @@ export default function FODAForm() {
 
 					<div
 						className={`mt-4 flex items-center justify-between rounded-md p-3 ${isImportanceValid ? "border border-green-200 bg-green-50" : "border border-amber-200 bg-amber-50"}`}>
-						<div className="flex items-center gap-2">
+						<div className="flex h-[32px] items-center justify-center gap-2">
 							{!isImportanceValid && <AlertTriangle className="h-5 w-5 text-amber-500" />}
 							<span
 								className={`font-medium ${isImportanceValid ? "text-green-700" : "text-amber-700"}`}>
 								Importancia Total: {currentTotal.toFixed(2)}/1.00
 							</span>
+							<ImportanceWarning />
 						</div>
 						{!isImportanceValid && (
 							<Button
@@ -556,26 +426,14 @@ export default function FODAForm() {
 									</div>
 
 									<div className="space-y-6">
-										<div className="space-y-4">
+										<div className="bg-accent/50 space-y-4 rounded-md p-4">
 											<div className="flex items-center justify-between">
 												<div className="flex items-center gap-2">
 													<label className="text-sm font-medium">
 														Importancia: {getImportanceLabel(currentAnswer.importancia)} (
 														{currentAnswer.importancia.toFixed(2)})
 													</label>
-													<TooltipProvider>
-														<Tooltip>
-															<TooltipTrigger asChild>
-																<Info className="text-muted-foreground h-4 w-4 cursor-help" />
-															</TooltipTrigger>
-															<TooltipContent className="max-w-xs">
-																<p>
-																	La importancia (0-1) mide cuán significativo es este factor para
-																	su éxito.
-																</p>
-															</TooltipContent>
-														</Tooltip>
-													</TooltipProvider>
+													<ImportanceInfo />
 												</div>
 											</div>
 											<Slider
@@ -594,25 +452,14 @@ export default function FODAForm() {
 											</div>
 										</div>
 
-										<div className="space-y-4">
+										<div className="bg-accent/50 space-y-4 rounded-md p-4">
 											<div className="flex items-center justify-between">
 												<div className="flex items-center gap-2">
 													<label className="text-sm font-medium">
 														Calificación: {getQualificationLabel(currentAnswer.calificacion)} (
 														{currentAnswer.calificacion})
 													</label>
-													<TooltipProvider>
-														<Tooltip>
-															<TooltipTrigger asChild>
-																<Info className="text-muted-foreground h-4 w-4 cursor-help" />
-															</TooltipTrigger>
-															<TooltipContent className="max-w-xs">
-																<p>
-																	La calificación (1-4) mide qué tan bien se desempeña en esta área.
-																</p>
-															</TooltipContent>
-														</Tooltip>
-													</TooltipProvider>
+													<QualificationInfo />
 												</div>
 											</div>
 											<Slider
@@ -637,101 +484,28 @@ export default function FODAForm() {
 						})}
 				</CardContent>
 				<CardFooter className="flex flex-col gap-4">
-					{validationError && (
-						<div className="w-full rounded-md border border-amber-200 bg-amber-50">
-							<Collapsible>
-								<div className="flex items-center justify-between p-2">
-									<div className="flex items-center gap-2">
-										<AlertTriangle className="h-4 w-4 text-amber-500" />
-										<span className="text-sm font-medium text-amber-800">
-											Problemas de validación
-										</span>
-									</div>
-									<CollapsibleTrigger asChild>
-										<Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-											<ChevronDown className="h-3 w-3" />
-											<span className="sr-only">Toggle details</span>
-										</Button>
-									</CollapsibleTrigger>
+					<div
+						className={`w-full rounded-md border border-amber-200 bg-amber-50 transition-all transition-discrete ${validationError ? "block" : "opacity-0"}`}>
+						<Collapsible>
+							<div className="flex items-center justify-between p-2">
+								<div className="flex items-center gap-2">
+									<AlertTriangle className="h-4 w-4 text-amber-500" />
+									<span className="text-sm font-medium text-amber-800">
+										Problemas de validación
+									</span>
 								</div>
-								<CollapsibleContent className="px-3 pb-2">
-									<p className="text-xs text-amber-700">{validationError}</p>
-								</CollapsibleContent>
-							</Collapsible>
-						</div>
-					)}
-					{!areAllImportanceTotalsValid() && currentCategoryIndex === categories.length - 1 && (
-						<div className="w-full rounded-md border border-amber-200 bg-amber-50">
-							<Collapsible>
-								<div className="flex items-center justify-between p-3">
-									<div className="flex items-center gap-2">
-										<AlertTriangle className="h-4 w-4 text-amber-500" />
-										<span className="font-medium text-amber-800">
-											Cannot complete analysis due to invalid importance values
-										</span>
-									</div>
-									<div className="flex items-center gap-2">
-										<Button
-											variant="outline"
-											size="sm"
-											onClick={normalizeAllCategories}
-											className="border-amber-300 text-amber-700 hover:bg-amber-100">
-											Normalize All
-										</Button>
-										<CollapsibleTrigger asChild>
-											<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-												<ChevronDown className="h-4 w-4" />
-												<span className="sr-only">Toggle details</span>
-											</Button>
-										</CollapsibleTrigger>
-									</div>
-								</div>
-								<CollapsibleContent className="px-3 pb-3">
-									<p className="text-sm text-amber-700">
-										You must ensure that the importance values for each category sum to exactly 1.0
-										before you can complete the analysis. Use the "Normalize All" button to
-										automatically adjust all categories.
-									</p>
-								</CollapsibleContent>
-							</Collapsible>
-						</div>
-					)}
-					{!areAllImportanceTotalsValid() && currentCategoryIndex === categories.length - 1 && (
-						<div className="w-full rounded-md border border-amber-200 bg-amber-50">
-							<Collapsible>
-								<div className="flex items-center justify-between p-3">
-									<div className="flex items-center gap-2">
-										<AlertTriangle className="h-4 w-4 text-amber-500" />
-										<span className="font-medium text-amber-800">
-											Cannot complete analysis due to invalid importance values
-										</span>
-									</div>
-									<div className="flex items-center gap-2">
-										<Button
-											variant="outline"
-											size="sm"
-											onClick={normalizeAllCategories}
-											className="border-amber-300 text-amber-700 hover:bg-amber-100">
-											Normalize All
-										</Button>
-										<CollapsibleTrigger asChild>
-											<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-												<ChevronDown className="h-4 w-4" />
-												<span className="sr-only">Toggle details</span>
-											</Button>
-										</CollapsibleTrigger>
-									</div>
-								</div>
-								<CollapsibleContent className="px-3 pb-3">
-									<p className="text-sm text-amber-700">
-										You must ensure that the importance values for each category sum to exactly 1.0
-										before you can complete the analysis. Use the "Normalize All" button to
-										automatically adjust all categories.
-									</p>
-								</CollapsibleContent>
-							</Collapsible>
-						</div>
-					)}
+								<CollapsibleTrigger asChild>
+									<Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+										<ChevronDown className="h-3 w-3" />
+										<span className="sr-only">Toggle details</span>
+									</Button>
+								</CollapsibleTrigger>
+							</div>
+							<CollapsibleContent className="px-3 pb-2">
+								<p className="text-xs text-amber-700">{validationError}</p>
+							</CollapsibleContent>
+						</Collapsible>
+					</div>
 					<div className="flex w-full justify-between">
 						<Button
 							variant="outline"
@@ -753,7 +527,7 @@ export default function FODAForm() {
 								</>
 							)}
 						</Button>
-					</div>{" "}
+					</div>
 				</CardFooter>
 			</Card>
 		</div>

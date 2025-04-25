@@ -1,8 +1,9 @@
 "use client"
 
-import { AlertTriangle, HelpCircle, Info } from "lucide-react"
+import { AlertTriangle, HelpCircle, Info, Lock } from "lucide-react"
 import { useEffect, useState } from "react"
 
+import { ImportanceInfo, QualificationInfo } from "@/client/components/helpers"
 import {
 	Accordion,
 	AccordionContent,
@@ -25,7 +26,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/client/components/ui/dialog"
-import { Progress } from "@/client/components/ui/progress"
+import { Label } from "@/client/components/ui/label"
 import { Slider } from "@/client/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/client/components/ui/tabs"
 import {
@@ -35,6 +36,8 @@ import {
 	TooltipTrigger,
 } from "@/client/components/ui/tooltip"
 
+import ORGResults from "./org-results"
+
 // Define the structure for capacity factors and questions
 interface CapacityQuestion {
 	id: string
@@ -43,7 +46,7 @@ interface CapacityQuestion {
 	qualification: number // 1 to 4
 }
 
-interface CapacityFactor {
+export interface CapacityFactor {
 	id: string
 	name: string
 	description: string
@@ -51,81 +54,80 @@ interface CapacityFactor {
 }
 
 export default function ORGForm() {
-	// Define the hardcoded factors and questions
 	const [factors, setFactors] = useState<CapacityFactor[]>([
 		{
 			id: "people",
-			name: "People",
-			description: "Evaluation of human resources, skills, and capabilities",
+			name: "Personas",
+			description: "Evaluación de recursos humanos, habilidades y capacidades",
 			questions: [
 				{
 					id: "people-1",
-					text: "Does your organization have the right number of people with appropriate skills to achieve its objectives?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿Su organización tiene el número correcto de personas con habilidades apropiadas para lograr sus objetivos?",
+					importance: 0.1,
+					qualification: 1,
 				},
 				{
 					id: "people-2",
-					text: "Does your organization effectively develop, engage, and retain talented employees?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿Su organización desarrolla, comprende y retiene a empleados talentosos?",
+					importance: 0.1,
+					qualification: 1,
 				},
 			],
 		},
 		{
 			id: "processes",
-			name: "Processes",
-			description: "Evaluation of operational procedures and workflows",
+			name: "Procesos",
+			description: "Evaluación de procedimientos operativos y flujos de trabajo",
 			questions: [
 				{
 					id: "processes-1",
-					text: "Are your organization's processes well-documented, efficient, and consistently followed?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿Los procesos de su organización están bien documentados, eficientes y se siguen constantemente?",
+					importance: 0.1,
+					qualification: 1,
 				},
 				{
 					id: "processes-2",
-					text: "Does your organization regularly review and improve its processes to enhance performance?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿Su organización revisa y mejora regularmente sus procesos para mejorar el rendimiento?",
+					importance: 0.1,
+					qualification: 1,
 				},
 			],
 		},
 		{
 			id: "technology",
-			name: "Technology",
-			description: "Evaluation of technological infrastructure and tools",
+			name: "Tecnología",
+			description: "Evaluación de infraestructura y herramientas tecnológicas",
 			questions: [
 				{
 					id: "technology-1",
-					text: "Does your organization have the appropriate technology infrastructure to support its operations?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿Su organización tiene la infraestructura tecnológica adecuada para apoyar sus operaciones?",
+					importance: 0.1,
+					qualification: 1,
 				},
 				{
 					id: "technology-2",
-					text: "Is your organization effectively leveraging technology to improve efficiency and innovation?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿Su Organización Tiene la Infraestructura Tecnológica adecuada para apoyar sus operaciones?",
+					importance: 0.1,
+					qualification: 1,
 				},
 			],
 		},
 		{
 			id: "culture",
-			name: "Culture",
-			description: "Evaluation of organizational values, behaviors, and norms",
+			name: "Cultura",
+			description: "Evaluación de valores, comportamientos y normas organizacionales",
 			questions: [
 				{
 					id: "culture-1",
-					text: "Does your organization have a clearly defined culture that supports its mission and strategy?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿Su organización tiene una cultura claramente definida que respalda su misión y estrategia?",
+					importance: 0.1,
+					qualification: 1,
 				},
 				{
 					id: "culture-2",
-					text: "Does your organization's culture promote collaboration, innovation, and continuous improvement?",
-					importance: 0.5,
-					qualification: 2,
+					text: "¿La cultura de su organización promueve la colaboración, la innovación y la mejora continua?",
+					importance: 0.1,
+					qualification: 1,
 				},
 			],
 		},
@@ -133,11 +135,13 @@ export default function ORGForm() {
 
 	// Track importance totals for each factor
 	const [importanceTotals, setImportanceTotals] = useState<Record<string, number>>({
-		people: 1,
-		processes: 1,
-		technology: 1,
-		culture: 1,
+		people: 0,
+		processes: 0,
+		technology: 0,
+		culture: 0,
 	})
+
+	const [activeTab, setActiveTab] = useState<string>("evaluation")
 
 	// Calculate importance totals whenever factors change
 	useEffect(() => {
@@ -153,41 +157,10 @@ export default function ORGForm() {
 		setImportanceTotals(newTotals)
 	}, [factors])
 
-	// Calculate weighted scores for each factor
-	const calculateFactorScores = () => {
-		return factors.map((factor) => {
-			const weightedScores = factor.questions.map((q) => q.importance * q.qualification)
-			const totalWeightedScore = weightedScores.reduce((sum, score) => sum + score, 0)
-
-			// Determine capacity level based on total weighted score
-			let capacityLevel = ""
-			let capacityColor = ""
-
-			if (totalWeightedScore <= 1.75) {
-				capacityLevel = "Weak"
-				capacityColor = "text-red-600 bg-red-50"
-			} else if (totalWeightedScore <= 2.5) {
-				capacityLevel = "Limited"
-				capacityColor = "text-amber-600 bg-amber-50"
-			} else if (totalWeightedScore <= 3.25) {
-				capacityLevel = "Moderate"
-				capacityColor = "text-blue-600 bg-blue-50"
-			} else {
-				capacityLevel = "High"
-				capacityColor = "text-green-600 bg-green-50"
-			}
-
-			return {
-				factor,
-				weightedScores,
-				totalWeightedScore,
-				capacityLevel,
-				capacityColor,
-			}
-		})
+	// Check if all importance totals are valid (equal to 1)
+	const areAllImportanceTotalsValid = () => {
+		return Object.values(importanceTotals).every((total) => Math.abs(total - 1) <= 0.01)
 	}
-
-	const factorScores = calculateFactorScores()
 
 	// Handle importance change for a question
 	const handleImportanceChange = (factorId: string, questionId: string, value: number[]) => {
@@ -267,106 +240,111 @@ export default function ORGForm() {
 	const getQualificationLabel = (value: number) => {
 		switch (value) {
 			case 1:
-				return "Poor"
+				return "Pobre"
 			case 2:
-				return "Fair"
+				return "Justa"
 			case 3:
-				return "Good"
+				return "Buena"
 			case 4:
-				return "Excellent"
+				return "Excelente"
 			default:
-				return "Fair"
+				return "Justa"
 		}
 	}
 
 	// Get label for importance value
 	const getImportanceLabel = (value: number) => {
 		if (value <= 0.25) {
-			return "Low"
+			return "Baja"
 		}
 		if (value <= 0.5) {
-			return "Moderate"
+			return "Moderada"
 		}
 		if (value <= 0.75) {
-			return "High"
+			return "Alta"
 		}
-		return "Critical"
+		return "Crítica"
 	}
 
-	// Get description for capacity level
-	const getCapacityDescription = (level: string) => {
-		switch (level) {
-			case "Weak":
-				return "Significant improvement needed. This area represents a major vulnerability for your organization."
-			case "Limited":
-				return "Basic capacity exists but requires substantial development to meet organizational needs effectively."
-			case "Moderate":
-				return "Adequate capacity with room for enhancement to achieve optimal performance."
-			case "High":
-				return "Strong capacity that serves as an organizational strength and competitive advantage."
-			default:
-				return ""
+	// Handle tab change
+	const handleTabChange = (value: string) => {
+		// Only allow changing to results tab if all importance totals are valid
+		if (value === "results" && !areAllImportanceTotalsValid()) {
+			return
 		}
+		setActiveTab(value)
+	}
+
+	const getNotas = (rating: number): string => {
+		const notas: Record<number, string> = {
+			1: "El factor está ausente, es débil o funciona de forma deficiente. No hay evidencia de avance o implementación.",
+			2: "Hay esfuerzos iniciales o presencia parcial del factor, pero aún es insuficiente o inconsistente.",
+			3: "El factor está implementado de forma funcional. Puede tener áreas de mejora, pero es operativo.",
+			4: "El factor está completamente desarrollado y sistematizado. Es una fortaleza de la organización.",
+		}
+		return notas[rating]
 	}
 
 	return (
 		<div className="max-w-[700px] space-y-6 lg:w-[700px]">
 			<div className="flex items-center justify-between">
-				<h1 className="text-secondary text-3xl font-bold">Organizational Capacity Evaluation</h1>
+				<h1 className="text-secondary text-3xl font-bold">
+					Evaluación de Capacidad Organizacional
+				</h1>
 				<Dialog>
 					<DialogTrigger asChild>
 						<Button variant="outline" size="sm" className="flex items-center gap-2">
 							<HelpCircle className="h-4 w-4" />
-							<span>Help</span>
+							<span>Ayuda</span>
 						</Button>
 					</DialogTrigger>
 					<DialogContent className="sm:max-w-md">
 						<DialogHeader>
-							<DialogTitle>Capacity Evaluation Guide</DialogTitle>
+							<DialogTitle>Guía de Evaluación de Capacidad Organizacional</DialogTitle>
 							<DialogDescription>
-								Understanding how to evaluate organizational capacity
+								Comprender cómo evaluar la capacidad organizacional
 							</DialogDescription>
 						</DialogHeader>
 						<div className="space-y-6">
 							<div>
-								<h3 className="mb-2 text-lg font-medium">What is Organizational Capacity?</h3>
+								<h3 className="mb-2 text-lg font-medium">¿Qué es la capacidad organizacional?</h3>
 								<p className="text-muted-foreground">
-									Organizational capacity refers to the ability of an organization to fulfill its
-									mission through a blend of sound management, strong governance, and a persistent
-									dedication to achieving results.
+									La capacidad de la organización se refiere a la capacidad de una organización para
+									cumplir su misión a través de una combinación de gestión sólida, una fuerte
+									gobernanza y una dedicación persistente para lograr resultados.
 								</p>
 							</div>
 
 							<div>
-								<h3 className="mb-2 text-lg font-medium">Rating System</h3>
+								<h3 className="mb-2 text-lg font-medium">Sistema de evaluación</h3>
 								<p className="text-muted-foreground mb-2">
-									Each question is rated on two dimensions:
+									Cada factor es evaluado en dos dimensiones:
 								</p>
 								<ul className="text-muted-foreground list-disc space-y-3 pl-5">
 									<li>
-										<span className="font-medium">Importance (0-1):</span> How critical this aspect
-										is to your organization's success. The sum of importance values for each
-										factor's questions must equal 1.
+										<span className="font-medium">Importancia (0-1):</span> Qué crítico es este
+										aspecto para el éxito de su organización. La suma de valores de importancia para
+										las preguntas de cada factor debe ser igual a 1.
 									</li>
 									<li>
-										<span className="font-medium">Qualification (1-4):</span> How well your
-										organization performs in this area.
+										<span className="font-medium">Calificación (1-4):</span> Qué tan bien se
+										desempeña su organización en esta área.
 										<ul className="mt-1 list-disc pl-5">
 											<li>
-												<span className="font-medium">1 - Poor:</span> Significant deficiencies
-												exist
+												<span className="font-medium">1 - Pobre:</span> Existen deficiencias
+												significativas
 											</li>
 											<li>
-												<span className="font-medium">2 - Fair:</span> Basic functionality with
-												notable gaps
+												<span className="font-medium">2 - Justa:</span> Funcionalidad básica con
+												brechas notables
 											</li>
 											<li>
-												<span className="font-medium">3 - Good:</span> Solid performance with minor
-												areas for improvement
+												<span className="font-medium">3 - Buena:</span> Rendimiento sólido con áreas
+												menores para mejorar
 											</li>
 											<li>
-												<span className="font-medium">4 - Excellent:</span> Exceptional performance,
-												best practice level
+												<span className="font-medium">4 - Excelente:</span> Rendimiento excepcional,
+												nivel de mejores prácticas
 											</li>
 										</ul>
 									</li>
@@ -374,23 +352,23 @@ export default function ORGForm() {
 							</div>
 
 							<div>
-								<h3 className="mb-2 text-lg font-medium">Capacity Levels</h3>
+								<h3 className="mb-2 text-lg font-medium">Niveles de capacidad</h3>
 								<ul className="text-muted-foreground list-disc space-y-1 pl-5">
 									<li>
-										<span className="font-medium text-red-600">Weak (1.00-1.75):</span> Significant
-										improvement needed
+										<span className="font-medium text-red-600">Débil (1.00-1.75):</span> Mejoras
+										significativas son necesarias
 									</li>
 									<li>
-										<span className="font-medium text-amber-600">Limited (1.76-2.50):</span> Basic
-										capacity exists but requires development
+										<span className="font-medium text-amber-600">Limitada (1.76-2.50):</span>{" "}
+										Capacidad básicas existen pero requieren desarrollo
 									</li>
 									<li>
-										<span className="font-medium text-blue-600">Moderate (2.51-3.25):</span>{" "}
-										Adequate capacity with room for enhancement
+										<span className="font-medium text-blue-600">Moderada (2.51-3.25):</span>{" "}
+										Capacidad adecuada con espacio para mejorar
 									</li>
 									<li>
-										<span className="font-medium text-green-600">High (3.26-4.00):</span> Strong
-										capacity and competitive advantage
+										<span className="font-medium text-green-600">Alta (3.26-4.00):</span> Fuerte
+										capacidad y ventaja competitiva
 									</li>
 								</ul>
 							</div>
@@ -400,14 +378,26 @@ export default function ORGForm() {
 			</div>
 
 			<p className="text-muted-foreground">
-				Evaluate your organization's capacity across four key dimensions: People, Processes,
-				Technology, and Culture.
+				Evalúe la capacidad de su organización en cuatro dimensiones clave: personas, procesos,
+				tecnología y cultura.
 			</p>
 
-			<Tabs defaultValue="evaluation" className="w-full">
+			<Tabs
+				defaultValue="evaluation"
+				className="w-full"
+				value={activeTab}
+				onValueChange={handleTabChange}>
 				<TabsList className="grid w-full grid-cols-2">
-					<TabsTrigger value="evaluation">Evaluation</TabsTrigger>
-					<TabsTrigger value="results">Results</TabsTrigger>
+					<TabsTrigger value="evaluation">Evaluación</TabsTrigger>
+					<TabsTrigger
+						value="results"
+						className="relative"
+						disabled={!areAllImportanceTotalsValid()}>
+						{!areAllImportanceTotalsValid() && (
+							<Lock className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform" />
+						)}
+						Resultados
+					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="evaluation" className="mt-6 space-y-6">
@@ -419,26 +409,47 @@ export default function ORGForm() {
 								<AccordionItem key={factor.id} value={factor.id}>
 									<AccordionTrigger className="hover:no-underline">
 										<div className="flex flex-col items-start">
-											<h3 className="text-lg font-semibold">{factor.name}</h3>
+											<div className="flex gap-2">
+												<h3 className="text-lg font-semibold">{factor.name}</h3>
+												<span
+													className={`items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-800 transition-all transition-discrete ${!isImportanceValid ? "inline-flex" : "opacity-0"}`}>
+													<AlertTriangle className="h-4.5 w-4.5" />
+												</span>
+											</div>
 											<p className="text-muted-foreground text-sm">{factor.description}</p>
 										</div>
 									</AccordionTrigger>
 									<AccordionContent>
 										<Card className="border-t-primary border-t-4">
 											<CardHeader>
-												<CardTitle className="text-lg">{factor.name} Capacity</CardTitle>
+												<CardTitle className="text-lg">Capacidad de {factor.name}</CardTitle>
 												<CardDescription>{factor.description}</CardDescription>
 
 												<div
 													className={`mt-4 flex items-center justify-between rounded-md p-3 ${isImportanceValid ? "border border-green-200 bg-green-50" : "border border-amber-200 bg-amber-50"}`}>
-													<div className="flex items-center gap-2">
+													<div className="flex h-[32px] items-center justify-center gap-2">
 														{!isImportanceValid && (
 															<AlertTriangle className="h-5 w-5 text-amber-500" />
 														)}
 														<span
 															className={`font-medium ${isImportanceValid ? "text-green-700" : "text-amber-700"}`}>
-															Total Importance: {importanceTotals[factor.id].toFixed(2)}/1.00
+															Importancia Total: {importanceTotals[factor.id].toFixed(2)}/1.00
 														</span>
+														<TooltipProvider>
+															<Tooltip>
+																<TooltipTrigger asChild>
+																	<Info className="text-muted-foreground h-4 w-4 cursor-help" />
+																</TooltipTrigger>
+																<TooltipContent className="max-w-xs">
+																	<p>
+																		Los valores de importancia para cada categoría deben sumar
+																		exactamente 1.0 antes de que pueda completar el análisis. Ajuste
+																		los valores o use el botón "Normalizar valores" para arreglarlos
+																		automáticamente.
+																	</p>
+																</TooltipContent>
+															</Tooltip>
+														</TooltipProvider>
 													</div>
 													{!isImportanceValid && (
 														<Button
@@ -446,7 +457,7 @@ export default function ORGForm() {
 															size="sm"
 															onClick={() => normalizeImportance(factor.id)}
 															className="border-amber-300 text-amber-700 hover:bg-amber-100">
-															Normalize Values
+															Normalizar valores
 														</Button>
 													)}
 												</div>
@@ -455,32 +466,19 @@ export default function ORGForm() {
 												{factor.questions.map((question, qIndex) => (
 													<div key={question.id} className="rounded-md border p-4">
 														<div className="mb-4">
-															<h4 className="mb-2 text-sm font-medium">Question {qIndex + 1}</h4>
+															<h4 className="mb-2 text-sm font-medium">Factor {qIndex + 1}</h4>
 															<p className="text-sm">{question.text}</p>
 														</div>
 
 														<div className="space-y-6">
-															<div className="space-y-4">
+															<div className="bg-accent/50 space-y-4 rounded-md p-4">
 																<div className="flex items-center justify-between">
 																	<div className="flex items-center gap-2">
 																		<label className="text-sm font-medium">
-																			Importance: {getImportanceLabel(question.importance)} (
+																			Importancia: {getImportanceLabel(question.importance)} (
 																			{question.importance.toFixed(2)})
 																		</label>
-																		<TooltipProvider>
-																			<Tooltip>
-																				<TooltipTrigger asChild>
-																					<Info className="text-muted-foreground h-4 w-4 cursor-help" />
-																				</TooltipTrigger>
-																				<TooltipContent className="max-w-xs">
-																					<p>
-																						Importance (0-1) measures how critical this aspect is to
-																						your organization. The total importance across all
-																						questions must equal 1.
-																					</p>
-																				</TooltipContent>
-																			</Tooltip>
-																		</TooltipProvider>
+																		<ImportanceInfo />
 																	</div>
 																	<span className="text-muted-foreground text-xs">0 to 1</span>
 																</div>
@@ -494,33 +492,21 @@ export default function ORGForm() {
 																	className="py-4"
 																/>
 																<div className="text-muted-foreground flex justify-between text-xs">
-																	<span>Low</span>
-																	<span>Moderate</span>
-																	<span>High</span>
-																	<span>Critical</span>
+																	<span>Baja</span>
+																	<span>Moderada</span>
+																	<span>Alta</span>
+																	<span>Crítica</span>
 																</div>
 															</div>
 
-															<div className="space-y-4">
+															<div className="bg-accent/50 space-y-4 rounded-md p-4">
 																<div className="flex items-center justify-between">
 																	<div className="flex items-center gap-2">
 																		<label className="text-sm font-medium">
-																			Qualification: {getQualificationLabel(question.qualification)}{" "}
+																			Calificación: {getQualificationLabel(question.qualification)}{" "}
 																			({question.qualification})
 																		</label>
-																		<TooltipProvider>
-																			<Tooltip>
-																				<TooltipTrigger asChild>
-																					<Info className="text-muted-foreground h-4 w-4 cursor-help" />
-																				</TooltipTrigger>
-																				<TooltipContent className="max-w-xs">
-																					<p>
-																						Qualification (1-4) measures how well your organization
-																						performs in this area.
-																					</p>
-																				</TooltipContent>
-																			</Tooltip>
-																		</TooltipProvider>
+																		<QualificationInfo />
 																	</div>
 																	<span className="text-muted-foreground text-xs">1 to 4</span>
 																</div>
@@ -535,16 +521,21 @@ export default function ORGForm() {
 																	className="py-4"
 																/>
 																<div className="text-muted-foreground flex justify-between text-xs">
-																	<span>Poor</span>
-																	<span>Fair</span>
-																	<span>Good</span>
-																	<span>Excellent</span>
+																	<span>Pobre</span>
+																	<span>Justa</span>
+																	<span>Buena</span>
+																	<span>Excelente</span>
+																</div>
+
+																<div className="h-[60px]">
+																	<Label htmlFor={`dimension-notes-${qIndex}`}>Nota:</Label>
+																	<div>{getNotas(question.qualification)}</div>
 																</div>
 															</div>
 
 															<div className="bg-accent/50 rounded-md p-3">
 																<div className="flex items-center justify-between">
-																	<span className="text-sm font-medium">Weighted Score:</span>
+																	<span className="text-sm font-medium">Puntaje ponderado:</span>
 																	<span className="text-sm font-bold">
 																		{(question.importance * question.qualification).toFixed(2)}
 																	</span>
@@ -560,194 +551,25 @@ export default function ORGForm() {
 							)
 						})}
 					</Accordion>
+
+					<div
+						className={`mt-6 rounded-md border border-amber-200 bg-amber-50 p-4 transition-all transition-discrete ${!areAllImportanceTotalsValid() ? "block" : "opacity-0"}`}>
+						<div className="flex items-start gap-3">
+							<AlertTriangle className="mt-0.5 h-5 w-5 text-amber-500" />
+							<div>
+								<h3 className="mb-1 font-medium text-amber-800">Los resultados están bloqueados</h3>
+								<p className="text-sm text-amber-700">
+									Debe asegurarse de que los valores de importancia para cada suma de factor a
+									exactamente 1.0 antes de poder ver los resultados. Ajuste los valores o use el
+									botón "Normalizar valores" para cada factor.
+								</p>
+							</div>
+						</div>
+					</div>
 				</TabsContent>
 
 				<TabsContent value="results" className="mt-6 space-y-6">
-					<Card>
-						<CardHeader>
-							<CardTitle>Organizational Capacity Summary</CardTitle>
-							<CardDescription>
-								Overview of your organization's capacity across key dimensions
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div className="grid gap-6 md:grid-cols-2">
-								{factorScores.map(
-									({ factor, totalWeightedScore, capacityLevel, capacityColor }) => (
-										<Card key={factor.id} className="overflow-hidden">
-											<div
-												className={`h-2 w-full ${capacityColor.split(" ")[0].replace("text", "bg")}`}
-											/>
-											<CardHeader className="pb-2">
-												<CardTitle className="text-lg">{factor.name}</CardTitle>
-											</CardHeader>
-											<CardContent className="space-y-2">
-												<div className="flex items-center justify-between">
-													<span className="text-muted-foreground text-sm">Capacity Level:</span>
-													<span
-														className={`rounded-md px-2 py-1 text-sm font-medium ${capacityColor}`}>
-														{capacityLevel}
-													</span>
-												</div>
-												<div className="flex items-center justify-between">
-													<span className="text-muted-foreground text-sm">Score:</span>
-													<span className="text-sm font-bold">
-														{totalWeightedScore.toFixed(2)}/4.00
-													</span>
-												</div>
-												<Progress
-													value={(totalWeightedScore / 4) * 100}
-													className="mt-2 h-2"
-													indicatorClassName={capacityColor.split(" ")[0].replace("text", "bg")}
-												/>
-											</CardContent>
-										</Card>
-									),
-								)}
-							</div>
-
-							<div className="mt-8 space-y-6">
-								<h3 className="text-xl font-bold">Detailed Analysis</h3>
-
-								{factorScores.map(
-									({
-										factor,
-										weightedScores,
-										totalWeightedScore,
-										capacityLevel,
-										capacityColor,
-									}) => (
-										<Card key={`detail-${factor.id}`} className="overflow-hidden">
-											<div
-												className={`h-2 w-full ${capacityColor.split(" ")[0].replace("text", "bg")}`}
-											/>
-											<CardHeader>
-												<div className="flex items-center justify-between">
-													<CardTitle>{factor.name}</CardTitle>
-													<span
-														className={`rounded-md px-2 py-1 text-sm font-medium ${capacityColor}`}>
-														{capacityLevel} ({totalWeightedScore.toFixed(2)})
-													</span>
-												</div>
-												<CardDescription>{factor.description}</CardDescription>
-											</CardHeader>
-											<CardContent className="space-y-4">
-												<div className="bg-accent/30 rounded-md p-4">
-													<h4 className="mb-2 font-medium">Interpretation</h4>
-													<p className="text-muted-foreground text-sm">
-														{getCapacityDescription(capacityLevel)}
-													</p>
-												</div>
-
-												<div className="space-y-4">
-													<h4 className="font-medium">Question Breakdown</h4>
-													{factor.questions.map((question, index) => (
-														<div key={question.id} className="rounded-md border p-3">
-															<p className="mb-2 text-sm">{question.text}</p>
-															<div className="grid grid-cols-3 gap-2 text-sm">
-																<div className="bg-accent/30 rounded-md p-2">
-																	<span className="text-muted-foreground block text-xs">
-																		Importance
-																	</span>
-																	<span className="font-medium">
-																		{question.importance.toFixed(2)}
-																	</span>
-																</div>
-																<div className="bg-accent/30 rounded-md p-2">
-																	<span className="text-muted-foreground block text-xs">
-																		Qualification
-																	</span>
-																	<span className="font-medium">
-																		{question.qualification} (
-																		{getQualificationLabel(question.qualification)})
-																	</span>
-																</div>
-																<div className="bg-primary/10 rounded-md p-2">
-																	<span className="text-muted-foreground block text-xs">
-																		Weighted Score
-																	</span>
-																	<span className="font-medium">
-																		{weightedScores[index].toFixed(2)}
-																	</span>
-																</div>
-															</div>
-														</div>
-													))}
-												</div>
-
-												<div className="rounded-md border border-dashed p-4">
-													<h4 className="mb-2 font-medium">Recommendations</h4>
-													<p className="text-muted-foreground text-sm">
-														{capacityLevel === "Weak" &&
-															"Focus on building fundamental capabilities in this area. Consider developing a comprehensive improvement plan with clear milestones."}
-														{capacityLevel === "Limited" &&
-															"Work on strengthening existing capabilities and addressing key gaps. Prioritize improvements that will have the most significant impact."}
-														{capacityLevel === "Moderate" &&
-															"Build on your solid foundation by refining processes and addressing specific areas for improvement. Look for opportunities to innovate."}
-														{capacityLevel === "High" &&
-															"Maintain your strong position and share best practices across the organization. Consider how you can leverage this strength to improve other areas."}
-													</p>
-												</div>
-											</CardContent>
-										</Card>
-									),
-								)}
-							</div>
-
-							<div className="bg-accent mt-8 rounded-md p-4">
-								<h3 className="mb-2 text-lg font-bold">Overall Organizational Capacity</h3>
-								{(() => {
-									const overallScore =
-										factorScores.reduce(
-											(sum, { totalWeightedScore }) => sum + totalWeightedScore,
-											0,
-										) / 4
-									let overallLevel = ""
-									let overallColor = ""
-
-									if (overallScore <= 1.75) {
-										overallLevel = "Weak"
-										overallColor = "text-red-600"
-									} else if (overallScore <= 2.5) {
-										overallLevel = "Limited"
-										overallColor = "text-amber-600"
-									} else if (overallScore <= 3.25) {
-										overallLevel = "Moderate"
-										overallColor = "text-blue-600"
-									} else {
-										overallLevel = "High"
-										overallColor = "text-green-600"
-									}
-
-									return (
-										<div className="space-y-2">
-											<div className="flex items-center justify-between">
-												<span className="text-muted-foreground">Overall Capacity Level:</span>
-												<span className={`font-bold ${overallColor}`}>
-													{overallLevel} ({overallScore.toFixed(2)}/4.00)
-												</span>
-											</div>
-											<Progress
-												value={(overallScore / 4) * 100}
-												className="h-3"
-												indicatorClassName={overallColor.replace("text", "bg")}
-											/>
-											<p className="text-muted-foreground mt-4 text-sm">
-												{overallLevel === "Weak" &&
-													"Your organization has significant capacity challenges that need to be addressed to achieve your mission effectively. Focus on building fundamental capabilities across all dimensions."}
-												{overallLevel === "Limited" &&
-													"Your organization has basic capacity but requires substantial development to reach its full potential. Prioritize improvements in the weakest areas while strengthening existing capabilities."}
-												{overallLevel === "Moderate" &&
-													"Your organization has adequate capacity with room for enhancement. Build on your solid foundation by refining processes and addressing specific areas for improvement."}
-												{overallLevel === "High" &&
-													"Your organization has strong capacity across key dimensions. Maintain your strong position and continue to innovate and improve to stay ahead of changing demands."}
-											</p>
-										</div>
-									)
-								})()}
-							</div>
-						</CardContent>
-					</Card>
+					<ORGResults factors={factors} qualificationLabel={getQualificationLabel} />
 				</TabsContent>
 			</Tabs>
 		</div>
