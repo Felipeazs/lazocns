@@ -80,29 +80,29 @@ const fodaDefaultAnswers = {
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.25,
-			calificacion: 2,
+			importancia: 0.1,
+			calificacion: 1,
 		})),
 	debilidades: Array.from({ length: 4 })
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.25,
-			calificacion: 2,
+			importancia: 0.1,
+			calificacion: 1,
 		})),
 	oportunidades: Array.from({ length: 4 })
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.25,
-			calificacion: 2,
+			importancia: 0.1,
+			calificacion: 1,
 		})),
 	amenazas: Array.from({ length: 4 })
 		.fill(0)
 		.map((_) => ({
 			factor: "",
-			importancia: 0.25,
-			calificacion: 2,
+			importancia: 0.1,
+			calificacion: 1,
 		})),
 }
 
@@ -420,6 +420,7 @@ export default function FODAForm() {
 													</label>
 													<ImportanceInfo />
 												</div>
+												<span className="text-muted-foreground text-xs">0 a 1</span>
 											</div>
 											<Slider
 												defaultValue={[currentAnswer.importancia]}
@@ -446,6 +447,7 @@ export default function FODAForm() {
 													</label>
 													<QualificationInfo />
 												</div>
+												<span className="text-muted-foreground text-xs">1 a 4</span>
 											</div>
 											<Slider
 												defaultValue={[currentAnswer.calificacion]}

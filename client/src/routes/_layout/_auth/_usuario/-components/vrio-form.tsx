@@ -41,25 +41,25 @@ export default function VRIOForm() {
 			name: "Valor",
 			description:
 				"¿El recurso/capacidad permite aprovechar oportunidades o neutralizar amenazas externas?",
-			rating: 2,
+			rating: 0,
 			notes: "",
 		},
 		{
 			name: "Rareza",
 			description: "¿Cuán único o poco común es el recurso/capacidad en el mercado o sector?",
-			rating: 1,
+			rating: 0,
 			notes: "",
 		},
 		{
 			name: "Imitabilidad",
 			description: "¿Qué tan difícil es imitar o replicar esta ventaja por otros?",
-			rating: 3,
+			rating: 0,
 			notes: "",
 		},
 		{
 			name: "Organizacion",
 			description: "¿La empresa/entidad está organizada para explotar este recurso o capacidad?",
-			rating: 2,
+			rating: 0,
 			notes: "",
 		},
 	])

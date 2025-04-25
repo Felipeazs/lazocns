@@ -443,7 +443,7 @@ export default function ORGForm() {
 																		</label>
 																		<ImportanceInfo />
 																	</div>
-																	<span className="text-muted-foreground text-xs">0 to 1</span>
+																	<span className="text-muted-foreground text-xs">0 a 1</span>
 																</div>
 																<Slider
 																	max={1}
@@ -471,7 +471,7 @@ export default function ORGForm() {
 																		</label>
 																		<QualificationInfo />
 																	</div>
-																	<span className="text-muted-foreground text-xs">1 to 4</span>
+																	<span className="text-muted-foreground text-xs">1 a 4</span>
 																</div>
 																<Slider
 																	min={1}
