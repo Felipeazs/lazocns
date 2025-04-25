@@ -12,8 +12,8 @@ import { useEffect, useState } from "react"
 
 import {
 	FODAGuide,
+	ImportanceActions,
 	ImportanceInfo,
-	ImportanceWarning,
 	QualificationInfo,
 } from "@/client/components/helpers"
 import { Button } from "@/client/components/ui/button"
@@ -379,26 +379,11 @@ export default function FODAForm() {
 						Ingrese sus propios factores y evaluelos en función de la importancia y la calificación.
 					</CardDescription>
 
-					<div
-						className={`mt-4 flex items-center justify-between rounded-md p-3 ${isImportanceValid ? "border border-green-200 bg-green-50" : "border border-amber-200 bg-amber-50"}`}>
-						<div className="flex h-[32px] items-center justify-center gap-2">
-							{!isImportanceValid && <AlertTriangle className="h-5 w-5 text-amber-500" />}
-							<span
-								className={`font-medium ${isImportanceValid ? "text-green-700" : "text-amber-700"}`}>
-								Importancia Total: {currentTotal.toFixed(2)}/1.00
-							</span>
-							<ImportanceWarning />
-						</div>
-						{!isImportanceValid && (
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={normalizeImportance}
-								className="border-amber-300 text-amber-700 hover:bg-amber-100">
-								Normalizar valores
-							</Button>
-						)}
-					</div>
+					<ImportanceActions
+						valid={isImportanceValid}
+						total={currentTotal}
+						action={normalizeImportance}
+					/>
 				</CardHeader>
 
 				<CardContent className="space-y-8">

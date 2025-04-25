@@ -1,9 +1,9 @@
 "use client"
 
-import { AlertTriangle, HelpCircle, Info, Lock } from "lucide-react"
+import { AlertTriangle, HelpCircle, Lock } from "lucide-react"
 import { useEffect, useState } from "react"
 
-import { ImportanceInfo, QualificationInfo } from "@/client/components/helpers"
+import { ImportanceActions, ImportanceInfo, QualificationInfo } from "@/client/components/helpers"
 import {
 	Accordion,
 	AccordionContent,
@@ -29,12 +29,6 @@ import {
 import { Label } from "@/client/components/ui/label"
 import { Slider } from "@/client/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/client/components/ui/tabs"
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/client/components/ui/tooltip"
 
 import ORGResults from "./org-results"
 
@@ -425,42 +419,11 @@ export default function ORGForm() {
 												<CardTitle className="text-lg">Capacidad de {factor.name}</CardTitle>
 												<CardDescription>{factor.description}</CardDescription>
 
-												<div
-													className={`mt-4 flex items-center justify-between rounded-md p-3 ${isImportanceValid ? "border border-green-200 bg-green-50" : "border border-amber-200 bg-amber-50"}`}>
-													<div className="flex h-[32px] items-center justify-center gap-2">
-														{!isImportanceValid && (
-															<AlertTriangle className="h-5 w-5 text-amber-500" />
-														)}
-														<span
-															className={`font-medium ${isImportanceValid ? "text-green-700" : "text-amber-700"}`}>
-															Importancia Total: {importanceTotals[factor.id].toFixed(2)}/1.00
-														</span>
-														<TooltipProvider>
-															<Tooltip>
-																<TooltipTrigger asChild>
-																	<Info className="text-muted-foreground h-4 w-4 cursor-help" />
-																</TooltipTrigger>
-																<TooltipContent className="max-w-xs">
-																	<p>
-																		Los valores de importancia para cada categoría deben sumar
-																		exactamente 1.0 antes de que pueda completar el análisis. Ajuste
-																		los valores o use el botón "Normalizar valores" para arreglarlos
-																		automáticamente.
-																	</p>
-																</TooltipContent>
-															</Tooltip>
-														</TooltipProvider>
-													</div>
-													{!isImportanceValid && (
-														<Button
-															variant="outline"
-															size="sm"
-															onClick={() => normalizeImportance(factor.id)}
-															className="border-amber-300 text-amber-700 hover:bg-amber-100">
-															Normalizar valores
-														</Button>
-													)}
-												</div>
+												<ImportanceActions
+													valid={isImportanceValid}
+													total={importanceTotals[factor.id]}
+													action={() => normalizeImportance(factor.id)}
+												/>
 											</CardHeader>
 											<CardContent className="space-y-6">
 												{factor.questions.map((question, qIndex) => (

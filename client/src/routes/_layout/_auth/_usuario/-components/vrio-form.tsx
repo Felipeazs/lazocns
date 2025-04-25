@@ -3,6 +3,7 @@
 import { HelpCircle, Info, Minus, Plus } from "lucide-react"
 import { useState } from "react"
 
+import { VRIOGuide } from "@/client/components/helpers"
 import { Button } from "@/client/components/ui/button"
 import {
 	Card,
@@ -12,14 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/client/components/ui/card"
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/client/components/ui/dialog"
+import { Dialog, DialogTrigger } from "@/client/components/ui/dialog"
 import { Label } from "@/client/components/ui/label"
 import { Slider } from "@/client/components/ui/slider"
 import { Textarea } from "@/client/components/ui/textarea"
@@ -196,143 +190,7 @@ export default function VRIOForm() {
 							<span>Ayuda</span>
 						</Button>
 					</DialogTrigger>
-					<DialogContent className="text-secondary h-full overflow-auto sm:max-w-md">
-						<DialogHeader>
-							<DialogTitle>Guía Análisis VRIO</DialogTitle>
-							<DialogDescription>
-								Comprender cómo analizar los recursos utilizando el marco VRIO
-							</DialogDescription>
-						</DialogHeader>
-						<div className="space-y-6">
-							<div>
-								<h3 className="mb-2 text-lg font-medium">¿Qué es el análisis VRIO?</h3>
-								<p className="text-muted-foreground">
-									El análisis VRIO ayuda a identificar qué recursos y capacidades pueden conducir a
-									una ventaja competitiva sostenible. Evalúa recursos basados en cuatro criterios:
-									valor, rareza, imitabilidad y organización.
-								</p>
-							</div>
-
-							<div>
-								<h3 className="mb-2 text-lg font-medium">Las 4 dimensiones VRIO</h3>
-								<ul className="text-muted-foreground list-disc space-y-3 pl-5 text-sm">
-									<li>
-										<span className="font-medium">Valor (0-3): </span>
-										¿El recurso permite a su empresa explotar las oportunidades o neutralizar las
-										amenazas?
-										<ul className="mt-1 list-disc pl-5">
-											<li>
-												<span className="font-medium">0 - Ninguno: </span>
-												No genera valor
-											</li>
-											<li>
-												<span className="font-medium">1 - Bajo: </span>
-												Proporciona un valor mínimo
-											</li>
-											<li>
-												<span className="font-medium">2 - Medio: </span>
-												Proporciona un valor moderado
-											</li>
-											<li>
-												<span className="font-medium">3 - Alto: </span>
-												Proporciona un alto valor estratégico
-											</li>
-										</ul>
-									</li>
-									<li>
-										<span className="font-medium">Rareza (0-3): </span>
-										¿Cuán único o poco común es el recurso/capacidad en el mercado o sector?
-										<ul className="mt-1 list-disc pl-5">
-											<li>
-												<span className="font-medium">0 - Ninguno: </span>
-												Común entre los competidores
-											</li>
-											<li>
-												<span className="font-medium">1 - Bajo: </span>
-												Poco común
-											</li>
-											<li>
-												<span className="font-medium">2 - Medio: </span>
-												Raro
-											</li>
-											<li>
-												<span className="font-medium">3 - Alto: </span>
-												Muy raro / único
-											</li>
-										</ul>
-									</li>
-									<li>
-										<span className="font-medium">Imitabilidad (0-3): </span>
-										¿Qué tan difícil es imitar o replicar esta ventaja por otros?
-										<ul className="mt-1 list-disc pl-5">
-											<li>
-												<span className="font-medium">0 - Ninguno: </span>
-												Muy fácil de imitar
-											</li>
-											<li>
-												<span className="font-medium">1 - Bajo: </span>
-												Puede ser imitado con algo de esfuerzo
-											</li>
-											<li>
-												<span className="font-medium">2 - Medio: </span>
-												Difícil de imitar
-											</li>
-											<li>
-												<span className="font-medium">3 - Alto: </span>
-												Muy difícil de imitar
-											</li>
-										</ul>
-									</li>
-									<li>
-										<span className="font-medium">Organización (0-3):</span>
-										¿La empresa/entidad está organizada para explotar este recurso o capacidad?
-										<ul className="mt-1 list-disc pl-5">
-											<li>
-												<span className="font-medium">0 - Ninguno: </span>
-												No hay organización
-											</li>
-											<li>
-												<span className="font-medium">1 - Bajo: </span>
-												Estructura básica
-											</li>
-											<li>
-												<span className="font-medium">2 - Medio: </span>
-												Organización funcional
-											</li>
-											<li>
-												<span className="font-medium">3 - Alto: </span>
-												Organización totalmente alineada
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</div>
-
-							<div>
-								<h3 className="mb-2 text-lg font-medium">Implicaciones competitivas</h3>
-								<ul className="text-muted-foreground list-disc space-y-2 pl-5">
-									<li>
-										<span className="font-medium">Ventaja competitiva sostenible:</span> Puntajes de
-										recursos altos en todas las dimensiones
-									</li>
-									<li>
-										<span className="font-medium">Ventaja competitiva temporal:</span> Los puntajes
-										de recursos altos en valor, rareza y organización, pero más bajos en
-										imitabilidad
-									</li>
-									<li>
-										<span className="font-medium">Paridad competitiva:</span> Puntajes de recursos
-										altos en valor y organización, pero más bajos en rareza
-									</li>
-									<li>
-										<span className="font-medium">Desventaja competitiva:</span> Puntajes de
-										recursos bajos en la mayoría de las dimensiones Resource scores low across most
-										dimensions
-									</li>
-								</ul>
-							</div>
-						</div>
-					</DialogContent>
+					<VRIOGuide />
 				</Dialog>
 			</div>
 
@@ -406,7 +264,7 @@ export default function VRIOForm() {
 							</div>
 						</CardHeader>
 						<CardContent className="space-y-6">
-							<div className="space-y-4">
+							<div className="bg-accent/50 space-y-4 p-4">
 								<div className="flex items-center justify-between">
 									<p className="text-muted-foreground text-sm">
 										Rating: {getRatingLabel(dimension.name, dimension.rating)} ({dimension.rating}
@@ -447,11 +305,11 @@ export default function VRIOForm() {
 									<span>Medio (0)</span>
 									<span>Alto (0)</span>
 								</div>
-							</div>
 
-							<div>
-								<Label htmlFor={`dimension-notes-${index}`}>Nota:</Label>
-								<div>{getNotas(dimension.name.toLowerCase(), dimension.rating)}</div>
+								<div>
+									<Label htmlFor={`dimension-notes-${index}`}>Nota:</Label>
+									<div>{getNotas(dimension.name.toLowerCase(), dimension.rating)}</div>
+								</div>
 							</div>
 						</CardContent>
 					</Card>
@@ -459,12 +317,11 @@ export default function VRIOForm() {
 			</div>
 
 			<Card>
-				<CardFooter className="flex flex-col gap-4">
-					{validationError && (
-						<div className="w-full rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-							{validationError}
-						</div>
-					)}
+				<CardFooter className="flex flex-col gap-4 p-4">
+					<div
+						className={`w-full rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 ${validationError ? "inline" : "hidden"}`}>
+						{validationError}
+					</div>
 					<Button
 						onClick={handleSubmit}
 						className="bg-primary text-secondary hover:bg-primary/90 w-full">
