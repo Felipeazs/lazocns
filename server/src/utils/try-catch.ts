@@ -16,6 +16,6 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
 
 		return { data, error: null }
 	} catch (error) {
-		return { data: null, error: error as E }
+		return { data: null, error: new Error("An error occurred while processing your request.") }; // Do not expose sensitive error information
 	}
 }
