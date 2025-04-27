@@ -13,8 +13,10 @@ export function initPosthog() {
 			enableExceptionAutocapture: true,
 		})
 
-		client.on("error", (err) => {
-			throw new HTTPException(ERROR_CODE.INTERNAL_SERVER_ERROR, "An error occurred with PostHog");
+		client.on("error", (_err) => {
+			throw new HTTPException(ERROR_CODE.INTERNAL_SERVER_ERROR, {
+				message: "An error occurred connecting to PostHog",
+			})
 		})
 	}
 
@@ -36,12 +38,14 @@ export function captureEvent({ distinct_id, event, properties }: PostHogEvent) {
 				properties: properties ? sanitizeProperties(properties) : undefined, // Sanitize properties
 			})
 		}
-	} catch (err) {
-		throw new HTTPException(ERROR_CODE.INTERNAL_SERVER_ERROR, { message: "An error occurred while capturing the event." });
+	} catch (_err) {
+		throw new HTTPException(ERROR_CODE.INTERNAL_SERVER_ERROR, {
+			message: "An error occurred while capturing the event.",
+		})
 	}
 }
 
 function sanitizeProperties(properties: object): object {
 	// Implement sanitization logic to remove sensitive information
-	return properties;
+	return properties
 }

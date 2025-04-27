@@ -3,7 +3,7 @@ import { decode } from "hono/jwt"
 export const TIMER = import.meta.env.PROD ? 15 * 60 * 1000 : 15 * 1000
 
 export function getAccessToken(): string | null {
-	return null; // Consider using secure cookies instead of local storage for sensitive tokens
+	return localStorage.getItem("access_token")
 }
 
 export function checkAccessTokenExpired(token: string): boolean | undefined {
