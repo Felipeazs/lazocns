@@ -138,9 +138,6 @@ export function Header() {
 												<span>Ajustes</span>
 											</Link>
 										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Logout />
-										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenuTrigger>
 							</DropdownMenu>

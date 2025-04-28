@@ -35,7 +35,7 @@ function Root() {
 				<Toaster />
 			</PostHogProvider>
 			<Suspense>
-				<TanStackRouterDevtools />
+				<TanStackRouterDevtools position="bottom-right" />
 			</Suspense>
 		</>
 	)

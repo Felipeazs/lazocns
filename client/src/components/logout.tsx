@@ -27,15 +27,13 @@ export function Logout() {
 	}
 
 	return (
-		<div className="flex h-[20px] w-full items-center gap-2 text-red-500">
-			<LogOut className="text-red-500" />
-			<Button
-				variant="ghost"
-				size="sm"
-				className="m-0 p-0 hover:cursor-pointer"
-				onClick={handleLogout}>
-				Salir
-			</Button>
-		</div>
+		<Button
+			variant="ghost"
+			size="sm"
+			className="m-0 flex w-full justify-start p-0 text-red-500 hover:cursor-pointer"
+			onClick={handleLogout}>
+			<LogOut className="h-4 w-4 text-red-500" />
+			Salir
+		</Button>
 	)
 }
