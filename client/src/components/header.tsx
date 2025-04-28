@@ -3,7 +3,6 @@ import { Link, useLocation } from "@tanstack/react-router"
 import { CircleUserRound, Settings } from "lucide-react"
 import { useRef, useState } from "react"
 
-import { Logout } from "@/client/components/logout"
 import { Avatar, AvatarFallback, AvatarImage } from "@/client/components/ui/avatar"
 import {
 	DropdownMenu,
