@@ -1,6 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router"
-
-import { buttonVariants } from "@/client/lib/utils"
+import { createFileRoute } from "@tanstack/react-router"
 
 import ResumenAnalisis from "./-components/resumen-analisis"
 
@@ -18,9 +16,6 @@ function RouteComponent() {
 			<div className="space-y-6">
 				<ResumenAnalisis />
 			</div>
-			<Link to="/ajustes" className={buttonVariants({ size: "sm", variant: "outline" })}>
-				Ver mi perfil
-			</Link>
 		</div>
 	)
 }

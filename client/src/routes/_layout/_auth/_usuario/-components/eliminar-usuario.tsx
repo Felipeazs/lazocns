@@ -40,15 +40,17 @@ export function EliminarUsuario() {
 	})
 
 	return (
-		<Card>
+		<Card className="space-y-2">
 			<CardHeader>
 				<CardTitle className="text-xl">Zona de peligro</CardTitle>
 				<CardDescription>Elimina tu cuenta</CardDescription>
 			</CardHeader>
 			<CardContent className="border-destructive mx-6 flex items-center gap-4 rounded-md border-1 p-4 text-red-500">
 				<TriangleAlert width={50} />
-				Eliminar esta cuenta borrará permanentemente toda la información de tu cuenta y
-				evaluaciones.
+				<p>
+					Eliminar esta cuenta borrará permanentemente toda la información de tu cuenta y
+					evaluaciones.
+				</p>
 			</CardContent>
 			<CardFooter>
 				<AlertDialog>

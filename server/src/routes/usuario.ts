@@ -36,7 +36,19 @@ const app = new Hono<AppEnv>()
 		const id = usuario!.id
 
 		const { data: usuarioFound, error: dbError } = await tryCatch(
-			db.query.usuario.findFirst({ where: eq(usuarioTable.id, id) }),
+			db.query.usuario.findFirst({
+				where: eq(usuarioTable.id, id),
+				columns: {
+					id: true,
+					nombre: true,
+					apellido: true,
+					email: true,
+					organizacion: true,
+					image: true,
+					roles: true,
+					createdAt: true,
+				},
+			}),
 		)
 		if (dbError) {
 			throw new HTTPException(ERROR_CODE.INTERNAL_SERVER_ERROR, { message: dbError.message })

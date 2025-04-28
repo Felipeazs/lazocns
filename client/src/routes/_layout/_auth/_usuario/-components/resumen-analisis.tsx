@@ -25,22 +25,22 @@ const fodaData = {
 
 // Mock data for VRIO Analysis
 const vrioData = {
-	value: { score: 2, label: "Medium" },
-	rarity: { score: 1, label: "Low" },
-	imitability: { score: 3, label: "High" },
-	organization: { score: 2, label: "Medium" },
-	status: "Temporary Competitive Advantage",
+	value: { score: 2, label: "Medio" },
+	rarity: { score: 1, label: "Bajo" },
+	imitability: { score: 3, label: "Alto" },
+	organization: { score: 2, label: "Medio" },
+	status: "Ventaja Competitiva Temporal",
 	totalScore: 8,
 }
 
 // Mock data for Capacity Evaluation
 const capacityData = {
-	people: { score: 2.3, level: "Limited" },
-	processes: { score: 1.7, level: "Weak" },
-	technology: { score: 3.1, level: "Moderate" },
-	culture: { score: 2.6, level: "Moderate" },
+	people: { score: 2.3, level: "Limitda" },
+	processes: { score: 1.7, level: "Débil" },
+	technology: { score: 3.1, level: "Moderada" },
+	culture: { score: 2.6, level: "Moderada" },
 	overallScore: 2.4,
-	overallLevel: "Limited",
+	overallLevel: "Limitda",
 }
 export default function ResumenAnalisis() {
 	const navigate = useNavigate()
@@ -50,13 +50,13 @@ export default function ResumenAnalisis() {
 	// Get capacity level color
 	const getCapacityLevelColor = (level: string) => {
 		switch (level) {
-			case "Weak":
+			case "Débil":
 				return "text-red-600"
-			case "Limited":
+			case "Limitada":
 				return "text-amber-600"
-			case "Moderate":
+			case "Moderada":
 				return "text-blue-600"
-			case "High":
+			case "Alta":
 				return "text-green-600"
 			default:
 				return "text-muted-foreground"
@@ -65,13 +65,13 @@ export default function ResumenAnalisis() {
 
 	// Get VRIO status color
 	const getVrioStatusColor = (status: string) => {
-		if (status.includes("Sustainable")) {
+		if (status.includes("Sustentable")) {
 			return "text-green-600"
 		}
-		if (status.includes("Temporary")) {
+		if (status.includes("Temporal")) {
 			return "text-blue-600"
 		}
-		if (status.includes("Parity")) {
+		if (status.includes("Paridad")) {
 			return "text-amber-600"
 		}
 		return "text-red-600"
@@ -367,56 +367,56 @@ export default function ResumenAnalisis() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Analysis Insights</CardTitle>
-					<CardDescription>Key takeaways from your organizational assessments</CardDescription>
+					<CardTitle>Análisis</CardTitle>
+					<CardDescription>Conclusiones clave de tus evaluaciones organizacionales</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<div className="grid gap-4 md:grid-cols-3">
 						<div className="rounded-md border p-4">
 							<div className="mb-2 flex items-center gap-2">
 								<BarChart className="text-primary h-5 w-5" />
-								<h3 className="font-medium">FODA Insights</h3>
+								<h3 className="font-medium">FODA</h3>
 							</div>
 							<p className="text-muted-foreground text-sm">
 								{fodaData.overallScore > 0
-									? "Your organization has a moderately favorable position. Focus on leveraging strengths while addressing key weaknesses."
-									: "Your position faces challenges. Address critical weaknesses and mitigate threats to improve your strategic position."}
+									? "Su organización tiene una posición moderadamente favorable. Concéntrese en aprovechar las fortalezas mientras aborda las debilidades clave."
+									: "Su posición enfrenta desafíos. Abordar las debilidades críticas y mitigar las amenazas para mejorar su posición estratégica."}
 							</p>
 						</div>
 
 						<div className="rounded-md border p-4">
 							<div className="mb-2 flex items-center gap-2">
 								<Grid3X3 className="text-secondary h-5 w-5" />
-								<h3 className="font-medium">VRIO Insights</h3>
+								<h3 className="font-medium">VRIO</h3>
 							</div>
 							<p className="text-muted-foreground text-sm">
-								{vrioData.status === "Sustainable Competitive Advantage"
-									? "Your resources provide a sustainable competitive advantage. Continue to protect and leverage these valuable assets."
-									: vrioData.status === "Temporary Competitive Advantage"
-										? "Your resources provide a temporary advantage. Work on improving imitability to sustain your advantage."
-										: "Your resources need development to create a stronger competitive position. Focus on building value and rarity."}
+								{vrioData.status === "Ventaja competitiva sostenible"
+									? "Sus recursos proporcionan una ventaja competitiva sostenible. Continúe protegiendo y aprovechando estos valiosos activos."
+									: vrioData.status === "Ventaja competitiva temporal"
+										? "Sus recursos proporcionan una ventaja temporal. Trabaje para mejorar la imitabilidad para mantener su ventaja."
+										: "Sus recursos necesitan desarrollo para crear una posición competitiva más fuerte. Concéntrese en el valor del edificio y la rareza."}
 							</p>
 						</div>
 
 						<div className="rounded-md border p-4">
 							<div className="mb-2 flex items-center gap-2">
 								<Gauge className="h-5 w-5 text-blue-500" />
-								<h3 className="font-medium">Capacity Insights</h3>
+								<h3 className="font-medium">Organizacional</h3>
 							</div>
 							<p className="text-muted-foreground text-sm">
-								{capacityData.overallLevel === "Weak"
-									? "Your organization has significant capacity challenges. Focus on building fundamental capabilities."
-									: capacityData.overallLevel === "Limited"
-										? "Your organization has basic capacity but requires development. Prioritize improvements in the weakest areas."
-										: capacityData.overallLevel === "Moderate"
-											? "Your organization has adequate capacity with room for enhancement. Build on your solid foundation."
-											: "Your organization has strong capacity. Maintain your position and continue to innovate."}
+								{capacityData.overallLevel === "Débil"
+									? "Su organización tiene importantes desafíos de capacidad. Concéntrese en la creación de capacidades fundamentales."
+									: capacityData.overallLevel === "Limitada"
+										? "Su organización tiene capacidad básica pero requiere desarrollo. Priorizar mejoras en las áreas más débiles."
+										: capacityData.overallLevel === "Moderada"
+											? "Su organización tiene una capacidad adecuada con espacio para la mejora. Construye sobre tu base sólida."
+											: "Su organización tiene una gran capacidad. Mantenga su posición y continúe innovando."}
 							</p>
 						</div>
 					</div>
 
 					<div className="bg-accent/30 rounded-md p-4">
-						<h3 className="mb-2 font-medium">Recommended Actions</h3>
+						<h3 className="mb-2 font-medium">Acciones recomendadas</h3>
 						<ul className="space-y-2 text-sm">
 							<li className="flex items-start gap-2">
 								<div className="bg-primary mt-0.5 rounded-full p-1">
@@ -424,8 +424,8 @@ export default function ResumenAnalisis() {
 								</div>
 								<span>
 									{fodaData.weaknesses.score > 2.5
-										? "Address high-priority weaknesses identified in the FODA analysis."
-										: "Leverage key strengths to capitalize on identified opportunities."}
+										? "Abordar las debilidades de alta prioridad identificadas en el análisis FODA."
+										: "Aproveche las fortalezas clave para capitalizar las oportunidades identificadas."}
 								</span>
 							</li>
 							<li className="flex items-start gap-2">
@@ -434,8 +434,8 @@ export default function ResumenAnalisis() {
 								</div>
 								<span>
 									{vrioData.organization.score < 2
-										? "Improve organizational structures to better leverage your valuable resources."
-										: "Develop strategies to enhance the rarity and inimitability of your key resources."}
+										? "Mejorar las estructuras organizacionales para aprovechar mejor sus valiosos recursos."
+										: "Desarrolle estrategias para mejorar la rareza e inimitabilidad de sus recursos clave."}
 								</span>
 							</li>
 							<li className="flex items-start gap-2">
@@ -444,8 +444,8 @@ export default function ResumenAnalisis() {
 								</div>
 								<span>
 									{capacityData.processes.score < capacityData.people.score
-										? "Focus on improving business processes to enhance overall organizational capacity."
-										: "Invest in technology and people development to strengthen organizational capabilities."}
+										? "Concéntrese en mejorar los procesos comerciales para mejorar la capacidad organizacional general."
+										: "Invierta en tecnología y desarrollo de personas para fortalecer las capacidades organizacionales."}
 								</span>
 							</li>
 						</ul>
